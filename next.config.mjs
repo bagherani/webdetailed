@@ -12,7 +12,8 @@ const nextConfig = {
         permanent: true,
       },
     ]
-  }
+  },
+  output: 'export',
 }
 
 const withMDX = createMDX({
