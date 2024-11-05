@@ -1,0 +1,152 @@
+---
+title: "Getting Started with Next.js 14+: A Comprehensive Guide to Building Full-Stack Applications with the App Router"
+date: 2024-11-05
+author: "Mohi"
+---
+
+## Introduction
+
+**Next.js** has become the go-to framework for building powerful, SEO-friendly, and scalable web applications, especially since the release of versions 14 and 15. These newer versions bring a fundamental shift to Next.js with the introduction of the **App Router**. This update allows for a more modular and streamlined approach to routing and data fetching, enhancing performance and developer experience.
+
+In this post, I’ll break down the basics of Next.js 14+ and the App Router, so you can get started with best practices in building scalable full-stack applications.
+
+Here's the link to a great video guide on the subject:
+
+<iframe
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/73ZadKNvMYg?si=UNsfls4EJ7Rbx18E"
+  title="YouTube video player"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerpolicy="strict-origin-when-cross-origin"
+  allowfullscreen
+></iframe>
+
+## What is Next.js?
+
+**Next.js** is an open-source web framework built on top of **React.js** that provides tools to handle server-side rendering, static generation, and routing with ease. The introduction of the App Router simplifies these processes even further, allowing developers to focus more on application logic rather than configurations.
+
+## Key Features in Next.js 14+ with the App Router
+
+Next.js 14+ builds upon the strengths of earlier versions while introducing a new approach to routing, data fetching, and server-side rendering. Here’s a breakdown of some key changes:
+
+### 1. **App Directory**
+
+The `app` directory in Next.js 14+ simplifies routing, providing a more intuitive and flexible approach. Unlike the older `pages` directory, where files automatically mapped to routes, the `app` directory allows for nested routes and layouts that better suit complex applications.
+
+**Example Structure:**
+
+```sh
+  - app/
+    - layout.js
+    - page.js
+    - about/
+      - page.js
+    - blog/
+      - [id]/
+        - page.js
+```
+
+Here:
+
+- `layout.js` serves as a shared layout for nested routes.
+- Each `page.js` represents a unique route.
+
+For instance, the `about/page.js` file corresponds to the `/about` route, while `blog/[id]/page.js` represents a dynamic route for blog posts.
+
+### 2. **Server and Client Components**
+
+With the App Router, Next.js 14+ introduces **Server and Client Components**. By default, components in the `app` directory are **Server Components**, meaning they’re rendered on the server. This helps reduce client-side JavaScript and improves performance.
+
+To make a component a **Client Component**, simply add `'use client'` at the top of the file:
+
+```tsx
+// app/dashboard/page.js
+
+"use client";
+
+export default function Dashboard() {
+  return <div>Client-Side Dashboard</div>;
+}
+```
+
+Server Components are ideal for non-interactive elements and data fetching, while Client Components handle interactivity and client-side state.
+
+### 3. **Data Fetching Methods**
+
+Next.js 14+ provides built-in support for data fetching with functions like `fetch`, which you can use directly in Server Components. Additionally, **React Suspense** is used for asynchronous rendering.
+
+**Example:**
+
+```tsx
+// app/blog/page.js
+
+export default async function Blog() {
+  const posts = await fetch("https://api.example.com/posts").then((res) =>
+    res.json()
+  );
+
+  return (
+    <div>
+      <h1>Blog Posts</h1>
+      <ul>
+        {posts.map((post) => (
+          <li key={post.id}>{post.title}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+```
+
+This approach keeps data-fetching logic on the server, which improves both performance and security.
+
+## Installation and Setup
+
+To get started with Next.js 14+, install it using `npx`:
+
+```sh
+  npx create-next-app@latest my-next-app --experimental-app-router
+  cd my-next-app
+  npm run dev
+```
+
+The `--experimental-app-router` flag enables the new App Router structure, creating the `app` directory by default.
+
+## Optimizations with Next.js 14+
+
+### 1. **Automatic Caching and Revalidation**
+
+The App Router introduces smarter caching with automatic revalidation options. By default, Next.js caches responses on the server. You can also specify cache revalidation intervals using the `revalidate` option in data-fetching functions:
+
+```tsx
+export async function getStaticProps() {
+  const data = await fetchData();
+  return { props: { data }, revalidate: 10 }; // revalidate every 10 seconds
+}
+```
+
+### 2. **React Suspense for Async Components**
+
+React Suspense lets you asynchronously load components or data, showing a fallback UI while loading:
+
+```tsx
+import { Suspense } from "react";
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AsyncComponent />
+    </Suspense>
+  );
+}
+```
+
+## Conclusion
+
+Next.js 14+ with the App Router offers a powerful and flexible solution for building web applications. With its enhanced data-fetching capabilities, automatic caching, and simplified routing, this framework enables you to create fast, scalable, and maintainable applications with ease.
+
+Explore the [Next.js documentation](https://nextjs.org/docs) or check out the video above to get a deeper understanding of how to leverage these new features in your projects.
+
+Happy coding!

@@ -1,0 +1,142 @@
+---
+title: "Next.js 15 Setup Guide: Basic, Template, and Monorepo Installations with TurboRepo"
+date: 2024-11-05
+author: "Mohi"
+---
+
+## Introduction
+
+With the release of Next.js 15 (Canary), new possibilities for modular architecture and high-performance builds have emerged. This guide walks you through setting up a basic Next.js app, adding boilerplate templates for testing, and configuring a **monorepo** setup with **TurboRepo**.
+
+## Requirements
+
+1. **Node.js** version 18.18 or later.
+2. **Operating System**: Windows, MacOS, or Linux (tested on MacOS).
+
+> **Note:** For high-performance projects or monorepos, TurboRepo is highly recommended.
+
+---
+
+## Setting Up a Basic Next.js 15 App
+
+### Step 1: Installing a New Next.js App
+
+Follow these steps to create a new Next.js 15 application with basic setup options:
+
+1. Open a terminal and run:
+
+   ```sh
+   npx create-next-app@canary my-app
+   ```
+
+2. The setup will prompt you to select configurations. Here’s a typical setup:
+
+   - **App Name**: `my-app`
+   - **TypeScript**: Yes
+   - **ESLint**: Yes
+   - **Tailwind CSS**: Yes (optional)
+   - **src Directory**: Yes
+   - **App Router**: Yes (recommended)
+   - **Custom Server**: No
+
+3. After selecting the options, dependencies will install automatically.
+
+4. Once installed, navigate to the project directory and start the development server:
+
+   ```sh
+   cd my-app
+   npm run dev
+   ```
+
+5. Your Next.js app is now running at `http://localhost:3000`.
+
+---
+
+## Using Boilerplates and Templates
+
+Next.js offers several template projects that include different setups, like **Jest** or **TypeScript** configurations, to streamline the process of adding testing or other tools.
+
+### Adding Testing (Jest) to a Project
+
+1. First, ensure that the app is created as above.
+2. To add testing, you can either set it up manually or use a template from the Next.js examples:
+
+   ```sh
+   npx create-next-app@canary --example with-jest my-app-with-jest
+   ```
+
+3. After installation, check the `package.json` file to verify Jest dependencies have been added.
+
+### Other Templates
+
+You can also choose specific setups using various templates. To install with additional boilerplate configurations:
+
+    ```sh
+    npx create-next-app@canary --example <example-name> <app-name>
+    ```
+
+For example, to set up with **Jest and TypeScript**:
+
+    ```sh
+    npx create-next-app@canary --example with-jest --ts my-ts-jest-app
+    ```
+
+Check the [Next.js examples repo](https://github.com/vercel/next.js/tree/canary/examples) for other templates, like **Sentry** integration or **MSW** for mocking APIs.
+
+---
+
+## Creating a Monorepo with TurboRepo
+
+For larger projects requiring multiple applications within the same repository, **TurboRepo** offers an optimized build system.
+
+### Step 1: Setting Up a TurboRepo Monorepo
+
+1. Go to [TurboRepo](https://turbo.build/repo) and review its requirements.
+2. Use Yarn to create a new monorepo:
+
+   ```sh
+   yarn create turbo
+   ```
+
+3. You’ll be prompted to select configurations like **Next.js** or **NestJS**. Follow the prompts and set up your project directory name.
+
+### Step 2: Directory Structure
+
+TurboRepo creates a structure with **apps** and **packages**:
+
+- **apps**: Holds each app (e.g., `docs` and `web` for Next.js apps).
+- **packages**: Contains shared code, like a `UI` component library.
+
+#### Example Directory Structure:
+
+    ```sh
+    - apps/
+      - docs/
+      - web/
+    - packages/
+      - ui/
+    turbo.json
+    ```
+
+### Step 3: Running a Monorepo App with TurboRepo
+
+To run the individual Next.js apps:
+
+1. Enter the app directory and start the server:
+
+   ```sh
+   cd apps/web
+   npm run dev
+   ```
+
+2. Repeat for other apps within `apps` (e.g., `docs`) to run them concurrently on different ports.
+
+3. TurboRepo optimizes builds with caching and remote storage, especially beneficial for **CI/CD pipelines**.
+
+---
+
+## Conclusion
+
+Whether you need a basic Next.js setup or a powerful monorepo with TurboRepo, this guide provides the steps to start with Next.js 15. Tailor your configuration based on project needs, from simple applications to complex setups with testing and multiple app modules.
+
+For more details, check out the [Next.js documentation](https://nextjs.org/docs) and the [TurboRepo guide](https://turbo.build/repo/docs).

@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import "prismjs/themes/prism-tomorrow.css";
 
 :root {
   --background: #ffffff;
@@ -25,3 +26,55 @@ body {
     text-wrap: balance;
   }
 }
+
+/* Global custom styles */
+.prose iframe {
+  width: 100%;
+  height: 400px;
+  border: none;
+  border-radius: 0.5rem;
+  margin-top: 1rem;
+}
+
+.prose blockquote {
+  font-style: italic;
+  color: #4a5568; /* Gray-700 */
+  padding-left: 1rem;
+  border-left: 4px solid #cbd5e0; /* Gray-300 */
+}
+
+/* Override specific syntax colors */
+.prose code[class*="language-"] {
+  background-color: #111827; /* Custom background for code blocks */
+  color: #f8fafc;
+}
+
+.prose .token.comment,
+.prose .token.prolog,
+.prose .token.doctype,
+.prose .token.cdata {
+  color: #6b7280; /* Gray for comments */
+}
+
+.prose .token.punctuation {
+  color: #d1d5db; /* Lighter gray for punctuation */
+}
+
+.prose .token.property,
+.prose .token.tag,
+.prose .token.constant,
+.prose .token.symbol,
+.prose .token.deleted {
+  color: #f87171; /* Red for tags and properties */
+}
+
+.prose .token.selector,
+.prose .token.attr-name,
+.prose .token.string,
+.prose .token.char,
+.prose .token.builtin,
+.prose .token.inserted {
+  color: #34d399; /* Green for strings and attributes */
+}
+
+/* Add more token overrides as needed */

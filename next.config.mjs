@@ -1,4 +1,26 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {};
+import createMDX from '@next/mdx'
+import rehypePrism from 'rehype-prism-plus';
 
-export default nextConfig;
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
+  redirects: async () => {
+    return [
+      {
+        source: '/about',
+        destination: '/',
+        permanent: true,
+      },
+    ]
+  }
+}
+
+const withMDX = createMDX({
+  // Add markdown plugins here, as desired
+  options: {
+    rehypePlugins: [rehypePrism]
+  }
+})
+
+// Merge MDX config with Next.js config
+export default withMDX(nextConfig)
