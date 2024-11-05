@@ -4,15 +4,6 @@ import rehypePrism from 'rehype-prism-plus';
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
-  redirects: async () => {
-    return [
-      {
-        source: '/about',
-        destination: '/',
-        permanent: true,
-      },
-    ]
-  },
   output: 'export',
 }
 
