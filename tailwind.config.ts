@@ -18,7 +18,7 @@ const config: Config = {
       fontFamily: {
         sans: ["Inter", ...fontFamily.sans],
       },
-      typography: ({ theme }) => ({
+      typography: ({ theme }: { theme: (str: string) => string }) => ({
         DEFAULT: {
           css: {
             color: theme("colors.gray.800"),
