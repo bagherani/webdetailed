@@ -1,0 +1,75 @@
+# Understanding the Next.js Project Structure: An In-Depth Guide
+
+Next.js automatically includes several default files and folders in a new project. In this guide, we will explore the role of each one and how they contribute to a well-organized, efficient project. 
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/mzQ-1NZ5DF4?si=xNsRBsaYgqokwNmw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+## Key Folders and Files in Next.js
+
+### Default Project Files
+
+Upon creating a Next.js project, you’ll see files like:
+
+- `tsconfig.json`: Configuration for TypeScript support.
+- `tailwind.config.js`: (If Tailwind was selected) Configuration for Tailwind CSS.
+- `.eslintrc`: Configures ESLint for code linting.
+- `.gitignore`: Specifies files to ignore in version control.
+- `package.json`: Contains the dependencies, scripts, and metadata for the project.
+- `next.config.js`: Core configurations for customizing and optimizing your Next.js app.
+
+Each of these files can be adjusted to customize your project as needed.
+
+### The `node_modules` Folder
+
+The `node_modules` folder holds all dependencies installed by npm. You generally don’t need to interact directly with this folder, but it is essential for running your project.
+
+### The `public` Folder
+
+The `public` folder contains static assets accessible from the root URL. For example, an SVG file stored as `public/file.svg` can be referenced as `/file.svg` directly in your code.
+
+Use this folder for:
+
+- **Images** and other assets to be served directly.
+- **PDFs** or other documents.
+- **CSS files** that don’t require pre-processing.
+
+### The `src` Folder
+
+The `src` folder is the main area for your application code. This is where all application-specific components, pages, and assets reside. 
+
+- **Pages**: All route-specific pages should be placed here.
+- **Components**: Use this folder for reusable UI components.
+- **CSS and Icons**: Some CSS and icon files are stored here instead of `public` because Next.js pre-processes them.
+
+For example, in `global.css`, you may import Tailwind’s utility classes. Next.js processes this file to bundle only the CSS classes in use.
+
+### Handling Global Files
+
+Certain files have conventional locations at the root level:
+
+- **Environment Variables (`.env`)**: Store environment-specific configurations here.
+- **Special Files**: Files like `robots.txt` and `sitemap.xml` can also be added to the root. Next.js identifies these files automatically and includes them in the application’s meta tags.
+
+### The `.next` Folder
+
+When running or building your project, Next.js compiles your TypeScript files and stores the output in `.next`. This folder includes:
+
+- **Server files** for Node.js runtime.
+- **Static files** that have been optimized for delivery.
+- **Cache**: Cache files that improve performance.
+
+Typically, this folder is ignored in version control and is recreated each time you run `npm run dev` or `npm run build`.
+
+## Folder Organization Best Practices
+
+To keep your project maintainable, consider these organizational principles:
+
+- **Root Level**: Place all global configurations at the root level.
+- **Source Code**: Place all application logic in `src`.
+- **Static Assets**: Store all public, user-accessible files in `public`.
+
+These guidelines ensure a clean, modular project structure that’s easy to navigate and scalable.
+
+---
+
+For a deeper dive, watch the full video embedded above for practical examples and a walk-through of setting up your Next.js project structure.

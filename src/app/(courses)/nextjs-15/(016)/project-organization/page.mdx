@@ -1,0 +1,113 @@
+# Mastering Next.js Folder Structure: Best Practices for Organizing Your Project
+
+In this guide, we’ll explore how to create a clean, scalable folder structure in Next.js projects, helping you keep your code organized as your application grows. This video dives into various folder structures and practices for managing pages, APIs, components, data models, and utility functions.
+
+<iframe
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/3Gok0ORR7C4?si=zgz4UgyNVNEV87dm"
+  title="YouTube video player"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerpolicy="strict-origin-when-cross-origin"
+  allowfullscreen
+></iframe>
+
+## Key Concepts of Next.js Routing and Folder Structure
+
+Next.js applications are organized around the concept of routes and pages, with specific conventions for which files generate public routes in the app. There are two primary types of route files in Next.js:
+
+1. **Page Files**: `page.tsx` files generate HTML and are typically used for client-facing pages.
+2. **Route Files**: `route.ts` files return data (e.g., JSON, XML) and are mainly used for API endpoints.
+
+Any folder within the `app` directory that contains one of these files automatically becomes a route. However, there are ways to exclude folders from routing if needed.
+
+## Creating a Public or Private Route
+
+If you create a `page.tsx` or `route.ts` file within a folder, that folder becomes a publicly accessible route. Here’s an example of a public route setup:
+
+```tsx
+// app/blog/page.tsx
+export default function BlogPage() {
+  return <div>Welcome to the Blog!</div>;
+}
+```
+
+### Making Private Folders in Next.js
+
+To create a folder that is not accessible as a route, use one of these methods:
+
+- **Private Folders**: Prefix the folder name with an underscore (`_`). For example, `_privateFolder` is ignored by the routing system.
+- **Route Groups**: Wrap the folder name in parentheses. For example, `(routeGroup)` makes the folder invisible in routes but still available for imports.
+
+### Example of a Private Folder Setup
+
+```tsx
+// app/\_privateFolder/exampleComponent.tsx
+export default function ExampleComponent() {
+  return <div>This is a private component.</div>;
+}
+```
+
+## Organizing Project Structure
+
+There are several common ways to structure a Next.js project, each catering to different needs:
+
+### 1. **Top-Level Structure**
+
+Place all components, utilities, and other modules at the top level in folders like `components`, `lib`, or `data`.
+
+```bash
+/src
+├── components
+├── lib
+├── data
+└── app
+```
+
+### 2. **Feature-Based Structure**
+
+Organize folders by feature, grouping all related components, utilities, and pages together. For example, a `dashboard` folder could contain its own `components`, `utils`, and `page.tsx`.
+
+```bash
+/app
+├── dashboard
+│ ├── page.tsx
+│ ├── components
+│ │ └── DashboardWidget.tsx
+│ └── utils
+│ └── dashboardUtils.ts
+└── settings
+├── page.tsx
+└── components
+└── SettingsForm.tsx
+```
+
+### 3. **Monorepo Structure**
+
+In a monorepo, separate shared resources into packages. Components and utilities are placed in dedicated packages and imported across different applications.
+
+```bash
+/packages
+├── ui
+│ └── Button.tsx
+├── utils
+│ └── fetchData.ts
+/apps
+└── app
+└── app-specific files
+```
+
+## Naming Conventions
+
+While naming conventions vary, some common practices include:
+
+- **Components**: PascalCase (e.g., `MyComponent`)
+- **Utilities**: camelCase (e.g., `fetchData`)
+- **Route Files**: `page.tsx` or `route.ts`
+
+## Summary
+
+Choosing an effective folder structure in Next.js can simplify development, improve collaboration, and scale better with project growth. By understanding public/private folders, route groups, and organizing around top-level vs. feature-based strategies, you can adapt Next.js projects to best fit your team's workflows.
+
+Stay tuned for more advanced tips in the Next.js ecosystem!

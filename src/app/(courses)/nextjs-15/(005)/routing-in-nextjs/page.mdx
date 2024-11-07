@@ -1,0 +1,86 @@
+{/* ---
+title: "Understanding URL Anatomy and Basic Routing in Next.js"
+description: "Learn the essentials of URL structure and how to create simple routes in Next.js. This guide covers the anatomy of URLs, creating static routes, and handling nested routes in Next.js."
+--- */}
+# Understanding URL Anatomy and Basic Routing in Next.js
+In this guide, we’ll explore the structure of URLs and how to implement basic routing in a Next.js application.
+<iframe width="560" height="315" src="https://www.youtube.com/embed/QNXZcqDyzBM?si=ZJMs8dFqT0waGm59" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+## Anatomy of a URL
+
+A URL is structured into several components, each with a specific purpose:
+
+- **Protocol**: Specifies the communication protocol, e.g., `http`, `https`, or `ftp`.
+- **Subdomain**: Optional; can be used for specific segments like `www` or `app`.
+- **Domain Name**: The core part of the URL that represents the website.
+- **Domain Extension**: Also called the **Top-Level Domain (TLD)**, e.g., `.com`, `.net`.
+- **Path (Segments)**: Starting after the domain, this represents different sections of the website.
+- **Query Parameters**: Key-value pairs used to pass data in the URL, e.g., `?id=123`.
+- **Fragment**: Optional part following a `#`, used to link to specific sections on a page.
+
+In Next.js, we primarily manage the **Path (Segments)** and have control over routing and structuring URLs in our application.
+
+## Creating a Basic Page in Next.js
+
+In Next.js, creating a route is as simple as adding a folder and file structure in the `app` directory. Let’s add a new page to our project as an example.
+
+### Step 1: Running the Project
+
+Ensure your Next.js project is running. Navigate to the home page to confirm everything is set up correctly.
+
+### Step 2: Adding a New Page
+
+To add a new route, follow these steps:
+
+1. Go to the `app` directory.
+2. Create a new folder, such as `about`. This folder will act as a path in the URL, e.g., `/about`.
+3. Inside the `about` folder, add a `page.tsx` or `page.js` file.
+4. Add content to `page.tsx`:
+
+   ```tsx
+   import React from 'react';
+
+   const AboutPage = () => {
+     return <h1>About Page</h1>;
+   };
+
+   export default AboutPage;
+   ```
+
+   Next.js will automatically recognize this as the route for `/about`, and you can visit this URL to see the new page.
+
+### Testing the Page
+
+Navigate to `http://localhost:3000/about` to verify the page. You should see the content of `AboutPage`.
+
+## Nested Routes in Next.js
+
+Next.js allows you to create nested routes by organizing your folders. Here’s how to add a nested route under `/about`:
+
+1. Inside the `about` folder, create a new folder named `me`.
+2. In the `me` folder, create another `page.tsx` file.
+3. Update the content in `page.tsx`:
+
+   ```tsx
+   import React from 'react';
+
+   const AboutMePage = () => {
+     return <h1>About Me Page</h1>;
+   };
+
+   export default AboutMePage;
+   ```
+
+4. Visit `http://localhost:3000/about/me` to view the nested page.
+
+## Next.js Page Component and Routing
+
+Each page in Next.js exports a default function that represents the entry point of the webpage. The name of the function doesn’t impact the functionality, but using descriptive names like `AboutPage` improves code readability.
+
+Next.js will automatically handle the routing based on the file structure, allowing you to build complex routes with minimal configuration.
+
+---
+
+This basic routing approach lets you set up a foundational structure in your Next.js app. Later, we’ll dive into dynamic routing, layouts, and templates.
+
+For a full walkthrough, watch the video embedded above.

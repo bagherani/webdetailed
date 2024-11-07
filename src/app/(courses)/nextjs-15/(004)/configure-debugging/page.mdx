@@ -1,0 +1,72 @@
+
+# Configuring Debugging in a Next.js App
+Before diving into routing, let’s configure debugging in a Next.js project to streamline the development experience. We’ll focus on Visual Studio Code (VS Code), as it is widely used, though similar steps apply for other editors like WebStorm (check respective documentation for details).
+<iframe width="560" height="315" src="https://www.youtube.com/embed/K2gh-pMaB18?si=KDcygGpVYo7CGKhP" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+## Setting Up Debugging in VS Code
+
+By default, VS Code doesn’t know how to run and debug Next.js projects. To enable debugging, we need to create a `launch.json` file with specific configurations.
+
+### Step 1: Create `launch.json`
+
+1. In the VS Code **Run and Debug** panel, select "Add Configuration" to create a new `launch.json` file.
+2. Choose any default configuration initially, as we’ll customize it. VS Code will create `launch.json` inside the `.vscode` folder at the root level.
+
+### Step 2: Configure `launch.json` for Next.js Debugging
+
+Visit the [Next.js debugging documentation](https://nextjs.org/docs) for up-to-date configurations. To save time, you can copy the provided settings for VS Code directly from there.
+
+Here’s an example configuration for full-stack debugging in Next.js:
+
+```json
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Full-Stack Next.js Debugging",
+      "program": "${workspaceFolder}/node_modules/next/dist/bin/next",
+      "args": ["dev"],
+      "runtimeArgs": ["--inspect"],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "outputCapture": "std"
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Debug with Chrome",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}",
+      "sourceMaps": true
+    }
+  ]
+}
+```
+
+**Note**: Change `Debug with Edge` to `Debug with Chrome` if you use Chrome as your default browser. This configuration opens a fresh Chrome instance in incognito mode with debugging enabled.
+
+### Step 3: Start Debugging
+
+1. Open the **Run and Debug** panel.
+2. Select the **Full-Stack Next.js Debugging** configuration from the dropdown.
+3. Click **Start Debugging**.
+
+VS Code will launch the app in a Chrome browser and enable live debugging with auto-refresh. 
+
+### Testing Debugging
+
+To verify that debugging is working:
+
+1. Open a file and add a `console.log` statement.
+2. Set a breakpoint on the line with `console.log`.
+3. Refresh the browser window; VS Code should pause at your breakpoint, displaying variables and call stacks in the debugging panel.
+
+With this setup, you can inspect and debug server-side and client-side code seamlessly, making it easier to troubleshoot issues across your Next.js application.
+
+---
+
+This configuration ensures a smoother development experience, enabling powerful debugging capabilities directly within your VS Code environment.
+
+For a full walkthrough, watch the video embedded above.

@@ -1,0 +1,94 @@
+{/* ---
+title: "Layouts in Next.js: Creating Shared Layouts and Preserving State"
+description: "Explore how to use layouts in Next.js for shared UI elements across pages, nested layouts, and preserving component state during navigation."
+--- */}
+
+# Layouts in Next.js: Creating Shared Layouts and Preserving State
+Layouts in Next.js provide a way to wrap content and share common elements, such as headers, footers, and sidebars, across multiple pages.
+<iframe width="560" height="315" src="https://www.youtube.com/embed/kp0iGaa5ndg?si=XCGludvcoIdzbs5h" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+## Using the Root Layout
+
+The **root layout** wraps all pages in a Next.js app, making it an ideal place for global components. To create one:
+
+1. In the root `app` directory, add `layout.tsx`.
+2. Define shared components like `Header` or `Footer` here.
+
+For example:
+
+```tsx
+import React from 'react';
+import Header from './Header';
+
+export default function RootLayout({ children }) {
+  return (
+    <>
+      <Header />
+      <main>{children}</main>
+    </>
+  );
+}
+```
+
+The layout wraps each page, ensuring that elements like the header persist across routes.
+
+## Nested Layouts
+
+You can create additional layouts for nested routes by adding `layout.tsx` in subdirectories:
+
+1. Inside the `app/about` directory, create `layout.tsx` to add a specific layout for pages under `/about`.
+2. The layout should return `children` to wrap content:
+
+   ```tsx
+   import React from 'react';
+
+   export default function AboutLayout({ children }) {
+     return <div className="about-layout">{children}</div>;
+   }
+   ```
+
+This will wrap every page in `/about` and its subdirectories, combining both the root and nested layouts.
+
+## Preserving State Between Pages
+
+Next.js layouts can preserve their state, which is useful for elements that maintain user data, like a shopping cart or user profile. This is enabled by soft navigation in Next.js:
+
+- **Soft navigation**: Uses AJAX to fetch and update content without reloading the whole page.
+- **Link component**: Use `<Link>` from Next.js for smooth navigation, which retains layout state.
+
+### Example with State Preservation
+
+To demonstrate state preservation, add a button to `Header` that increments a counter:
+
+```tsx
+"use client";
+
+import React, { useState } from 'react';
+import Link from 'next/link';
+
+export default function Header() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <header>
+      <button onClick={() => setCount(count + 1)}>Click count: {count}</button>
+      <nav>
+        <Link href="/">Home</Link>
+        <Link href="/about">About</Link>
+      </nav>
+    </header>
+  );
+}
+```
+
+Clicking the button increments the count, and navigating between pages retains this state.
+
+## Benefits of Layouts in Next.js
+
+- **Efficiency**: Shared components are defined once and applied across multiple pages.
+- **State preservation**: Soft navigation keeps layout states intact, reducing reloads for dynamic content.
+- **Structure**: Layouts organize page structures for easy maintenance.
+
+Layouts help centralize shared elements and streamline navigation, improving both user experience and development efficiency.
+
+In the next guide, we’ll cover **templates** and explain the differences between templates and layouts in Next.js.
