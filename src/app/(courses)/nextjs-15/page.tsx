@@ -4,6 +4,7 @@ export default function NextJS() {
   return (
     <div>
       <h1>Next.js 15 full course</h1>
+      <p>Work is in progress</p>
       <ol>
         <li>
           <Link href="/nextjs-15/intro">Intro to Next.js</Link>

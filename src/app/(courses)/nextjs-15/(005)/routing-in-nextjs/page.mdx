@@ -1,7 +1,10 @@
-{/* ---
-title: "Understanding URL Anatomy and Basic Routing in Next.js"
-description: "Learn the essentials of URL structure and how to create simple routes in Next.js. This guide covers the anatomy of URLs, creating static routes, and handling nested routes in Next.js."
---- */}
+import { LessonNavigation } from "@/components/lesson-navigation";
+
+export const metadata={
+  title : "Understanding URL Anatomy and Basic Routing in Next.js",
+  description: "Master URL structure and simple routing in Next.js, including static and nested routes, with this concise guide"
+}
+
 # Understanding URL Anatomy and Basic Routing in Next.js
 In this guide, we’ll explore the structure of URLs and how to implement basic routing in a Next.js application.
 <iframe width="560" height="315" src="https://www.youtube.com/embed/QNXZcqDyzBM?si=ZJMs8dFqT0waGm59" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
@@ -84,3 +87,5 @@ Next.js will automatically handle the routing based on the file structure, allow
 This basic routing approach lets you set up a foundational structure in your Next.js app. Later, we’ll dive into dynamic routing, layouts, and templates.
 
 For a full walkthrough, watch the video embedded above.
+
+<LessonNavigation nextUrl={'/nextjs-15/layouts-in-nextjs'} nextText={'Layouts in Next.js: Creating Shared Layouts and Preserving State'} prevUrl={'/nextjs-15/configure-debugging'} prevText={'Configuring Debugging in a Next.js App'}/>

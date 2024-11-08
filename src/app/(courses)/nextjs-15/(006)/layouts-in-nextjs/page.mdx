@@ -1,7 +1,9 @@
-{/* ---
-title: "Layouts in Next.js: Creating Shared Layouts and Preserving State"
-description: "Explore how to use layouts in Next.js for shared UI elements across pages, nested layouts, and preserving component state during navigation."
---- */}
+import { LessonNavigation } from "@/components/lesson-navigation";
+
+export const metadata={
+  title : "Layouts in Next.js: Creating Shared Layouts and Preserving State",
+  description: "Explore how to use layouts in Next.js for shared UI elements across pages, nested layouts, and preserving component state during navigation"
+}
 
 # Layouts in Next.js: Creating Shared Layouts and Preserving State
 Layouts in Next.js provide a way to wrap content and share common elements, such as headers, footers, and sidebars, across multiple pages.
@@ -92,3 +94,5 @@ Clicking the button increments the count, and navigating between pages retains t
 Layouts help centralize shared elements and streamline navigation, improving both user experience and development efficiency.
 
 In the next guide, we’ll cover **templates** and explain the differences between templates and layouts in Next.js.
+
+<LessonNavigation nextUrl={'/nextjs-15/project-organization'} nextText={'Mastering Next.js Folder Structure: Best Practices for Organizing Your Project'} prevUrl={'/nextjs-15/routing-in-nextjs'} prevText={'Understanding URL Anatomy and Basic Routing in Next.js'}/>
