@@ -5,5 +5,98 @@ export const metadata={
   description: "Learn about templates in Next.js and how they differ from layouts. Explore their use for resetting state and structuring pages, plus the metadata feature for modifying the head"
 }
 
+# Templates in Next.js
+
+A template in Next.js is a concept similar to a layout but with a key difference: templates do not preserve state across page navigation. This makes them useful when you want to utilize shared components (like headers and footers) but do not need to maintain the state between page transitions. 
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/BazdsVrH138?si=ZDKTxu0D96gk3NbI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+In this article, we’ll explore how to use templates effectively in Next.js.
+
+### How to Use Templates
+
+Suppose you're building a shopping page, and you have different pages like a cart and checkout. In this case, a template can be used to provide a shared structure for those pages while ensuring the state gets reset on every navigation.
+
+Let’s walk through how you can set up a template for a shopping page.
+
+#### Step 1: Create a Template Component
+
+You can create a template component by creating a `template.tsx` file inside the shopping route. Here’s how to do that:
+
+```tsx
+import React, { ReactNode } from 'react';
+
+type TemplateProps = {
+  children: ReactNode;
+};
+
+export default function ShoppingTemplate({ children }: TemplateProps) {
+  return (
+    <div>
+      <header>Shopping Header</header>
+      <main>{children}</main>
+      <footer>Shopping Footer</footer>
+    </div>
+  );
+}
+```
+
+This template component renders the header, footer, and the children (which will be the actual page content, like the cart or product listings).
+
+#### Step 2: Use the Template in the Page
+
+Now, you can apply this template to your shopping page. Here’s an example of how you would set up the shopping page:
+
+```tsx
+import ShoppingTemplate from './template';
+
+export default function ShoppingPage() {
+  return (
+    <ShoppingTemplate>
+      <h1>Welcome to the Shopping Page</h1>
+      <p>Browse our products and add them to your cart!</p>
+    </ShoppingTemplate>
+  );
+}
+```
+
+With this setup, whenever you navigate to the shopping page, the template will provide the layout structure with the header and footer. However, unlike a layout, the state is reset on navigation.
+
+### Template vs Layout
+
+The key difference between a template and a layout is state management. While layouts in Next.js preserve state when navigating between pages, templates reset the state. If you have dynamic components that change on navigation (like a shopping cart), templates ensure that the state is not preserved when moving between pages.
+
+To illustrate the difference, consider a setup with a shopping page and a cart page. If you navigate from the shopping page to the cart page and then back, the template will reset the state, whereas a layout would keep it intact.
+
+### Metadata Management in Next.js
+
+In addition to templates, Next.js provides a way to manage metadata, like the title and description in the `<head>` of the page. This is particularly useful for dynamic changes across different pages.
+
+#### Step 1: Export Metadata in a Layout or Page
+
+To modify the metadata, you can export a `metadata` constant from the layout or page. For example:
+
+```tsx
+import { metadata } from 'next';
+
+export const metadata = {
+  title: 'Shopping Page',
+  description: 'Browse products and manage your shopping cart.'
+};
+```
+
+This metadata will automatically update the `<head>` of the page when it is rendered. You can export this constant at the layout or page level, depending on your needs.
+
+#### Step 2: View the Changes
+
+Once you've set the metadata, refreshing the page will update the title and description in the browser's tab and within the page’s `<head>` section.
+
+To inspect this, you can right-click on the page, inspect the source, and find the `<title>` and `<meta>` tags dynamically added by Next.js.
+
+### Conclusion
+
+To summarize, templates in Next.js provide a flexible way to manage shared components while ensuring that the state is reset on navigation. By utilizing templates and metadata management, you can create clean, dynamic pages with minimal state retention. This approach is ideal when you want to refresh the state on each page load while maintaining the same layout across pages.
+
+Remember that templates are perfect when you don’t want to preserve the state, whereas layouts will maintain the state across navigation. By leveraging metadata, you can easily control the head tag properties like titles and descriptions dynamically across your application.
 
 <LessonNavigation nextUrl={'/nextjs-15/link-component'} nextText={'Link Component in Next.js'} prevUrl={'/nextjs-15/layouts-in-nextjs'} prevText={'Layouts in Next.js: Creating Shared Layouts and Preserving State'}/>
