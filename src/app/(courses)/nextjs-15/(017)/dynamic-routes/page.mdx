@@ -1,0 +1,102 @@
+import { LessonNavigation } from "@/components/lesson-navigation";
+
+export const metadata={
+  title : "Dynamic Routes in Next.js",
+  description: "how to implement dynamic routes in Next.js, from creating single and multiple segment routes to setting up optional parameters"
+}
+
+# Dynamic Routes in Next.js
+
+In Next.js, you can structure URLs using various folder segments in your application’s routing system. Typically, routes are defined using folders and pages, but for unknown or variable path segments, **Dynamic Routes** come into play.
+
+### Creating Dynamic Routes in Next.js
+
+Let’s say you have a `products` page listing all items, but you also want individual product pages, like `/products/101`, where `101` is the product ID and will vary for each product. Here’s how to set this up:
+
+1. **Create a `products` folder** in your `app` directory.
+2. **Add a dynamic `[id]` folder** within `products` for product-specific routes.
+3. Inside `[id]`, create `page.tsx` to render each product.
+
+### Example Code
+
+To dynamically capture a route segment like `id`, wrap the folder name in brackets and create the following page setup:
+
+```tsx
+// app/products/[id]/page.tsx
+import { useRouter } from 'next/router';
+
+export default async function ProductDetail({ params } : { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  return (
+    <div>
+      <h1>Product ID: {id}</h1>
+    </div>
+  );
+}
+```
+
+### Handling Multiple Dynamic Segments
+
+If your route requires multiple dynamic segments (e.g., `/products/[id]/[title]`), you can capture these as an array by adding three dots before the folder name, like `[...slug]`:
+
+```tsx
+// app/products/[...slug]/page.tsx
+export default function ProductDetail({ params } : { params: Promise<{ slug: string[] }> }) {
+  const { slug } = await params; // slug is now an array of segments
+  return (
+    <ul>
+      {slug.map((segment, index) => (
+        <li key={index}>{segment}</li>
+      ))}
+    </ul>
+  );
+}
+```
+
+Using `[...slug]` allows passing multiple segments, like `/products/101/shoes/red`, which can be split and used as needed.
+
+### Optional Dynamic Parameters
+
+To make a dynamic parameter optional, you can add double brackets around it: `[[slug]]`. This means the route can work both with and without the parameter:
+
+```tsx
+// app/products/[[slug]]/page.tsx
+export default function ProductDetail({ params } : { params: Promise<{ slug?: string }> }) {
+  const { slug } = await params;
+  return slug ? (
+    <h1>Product: {slug}</h1>
+  ) : (
+    <h1>All Products</h1>
+  );
+}
+```
+
+### Generating Static Pages for Dynamic Routes
+
+Next.js supports **Static Site Generation (SSG)** by generating pages for known paths at build time, boosting performance. To generate static pages for dynamic routes, Next.js provides the `generateStaticParams` function:
+
+```tsx
+// app/products/[id]/page.tsx
+export async function generateStaticParams() {
+  // Replace with API call or database query to fetch IDs
+  return [{ id: '101' }, { id: '102' }, { id: '103' }];
+}
+
+export default function ProductDetail({ params }) {
+  const { id } = params;
+  return (
+    <div>
+      <h1>Product ID: {id}</h1>
+    </div>
+  );
+}
+```
+
+By using `generateStaticParams`, Next.js will pre-render these specific product pages during build, improving load times.
+
+### Summary
+
+Dynamic routes in Next.js provide a flexible way to handle variable URL segments. Use `[param]` for single dynamic segments, `[...param]` for capturing multiple segments, and `[[param]]` for optional segments. For optimal performance, leverage `generateStaticParams` to pre-render paths with known parameters.
+
+
+<LessonNavigation nextUrl={''} nextText={''} prevUrl={'/nextjs-15/project-organization'} prevText={'Mastering Next.js Folder Structure: Best Practices for Organizing Your Project'}/>

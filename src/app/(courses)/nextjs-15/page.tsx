@@ -80,6 +80,11 @@ export default function NextJS() {
             Optimal Folder Structure in Next.js
           </Link>
         </li>
+        <li>
+          <Link href="/nextjs-15/dynamic-routes">
+            Dynamic routes in Next.js
+          </Link>
+        </li>
       </ol>
     </div>
   );
