@@ -6,4 +6,77 @@ export const metadata={
 }
 
 
+# Navigating with Next.js: useRouter Hook
+
+In Next.js, the `useRouter` hook allows programmatic navigation between pages, unlocking dynamic routing possibilities while preserving the soft navigation features offered by the `Link` component. This can be particularly useful in situations where links alone aren't feasible, such as navigating via button click events. Let's dive into core methods like `push`, `replace`, `prefetch`, and others to explore their roles in enhancing the user experience without full page reloads.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/FdgFPlHEVUo?si=GeRcPQrLWVIm7lxC" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+## Setting up useRouter for Navigation
+
+To start, replace any link component with a button or other interactive element for custom navigation control. First, initialize `useRouter`:
+
+```tsx
+import { useRouter } from 'next/navigation';
+
+function CustomNavigationButton() {
+  const router = useRouter();
+
+  const handleNavigation = () => {
+    router.push('/');
+  };
+
+  return <button onClick={handleNavigation}>Go to Home</button>;
+}
+```
+
+> **Note:** `useRouter` should be initialized at the top level of your component, not inside callbacks or event handlers, to follow React's hook rules.
+
+## Push Method in useRouter
+
+The `push` method redirects the user to a specified URL while keeping the soft navigation behavior. Unlike using `window.location`, `router.push` prevents a full page reload, enhancing performance:
+
+```tsx
+router.push('/home');
+```
+
+Additionally, `push` allows configuration to retain the scroll position on navigation. By default, scrolling resets to the top of the page, but you can prevent this:
+
+```tsx
+router.push('/shop', { scroll: false });
+```
+
+## Replace Method in useRouter
+
+The `replace` method is similar to `push` but does not add the destination URL to the browser's history stack. This can be useful for managing back navigation behavior in scenarios where the user shouldn’t return to the previous page.
+
+```tsx
+router.replace('/home', { scroll: false });
+```
+
+> With `replace`, the user stays on the destination page when pressing the browser's back button.
+
+## Prefetch Method in useRouter
+
+Prefetching loads pages in the background, reducing wait times when users navigate to them. In production, `Link` components automatically prefetch in-view links by default. For programmatic navigation, call `prefetch`:
+
+```tsx
+router.prefetch('/cart');
+```
+
+> **Pro Tip:** Prefetching is only available in production mode, so ensure you’re running the built version of your app to test this feature.
+
+## Back and Forward Methods
+
+The `back` and `forward` methods function as programmatic equivalents of the browser's back and forward buttons. They can be useful in custom navigation flows:
+
+```tsx
+router.back(); // Navigates to the previous page
+router.forward(); // Navigates to the next page
+```
+
+## Summary of useRouter
+
+The `useRouter` hook in Next.js is an essential tool for adding flexible, client-side navigation. Its methods provide a powerful way to manage routing with precision, from simple redirects to more complex page transitions. Use `push` for adding to the history stack, `replace` for single-step transitions, `prefetch` for optimizing load times, and `back` and `forward` to streamline custom browser navigation. Happy coding!
+
 <LessonNavigation nextUrl={'/nextjs-15/browser-pushstate'} nextText={'Work with the Browser history and pushState function in Next.js'} prevUrl={'/nextjs-15/link-component'} prevText={'Link Component in Next.js'}/>
