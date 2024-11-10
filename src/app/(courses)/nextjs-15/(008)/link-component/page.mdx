@@ -5,5 +5,78 @@ export const metadata={
   description: "Explore the Link component in Next.js for efficient SPA navigation. Learn about lazy loading, prefetching, and attributes like scroll and replace to optimize performance"
 }
 
+# Overview of Next.js `Link` Component
+
+In this lesson, we dive into the Next.js `Link` component, essential for enabling Single Page Application (SPA) behavior in Next.js applications. Here we discuss:
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/tlHGDDULdhA?si=H1eyO8ii2GOkSayL" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+1. Efficient navigation using `Link` for SPA functionality.
+2. Attributes like `scroll`, `prefetch`, and `replace` to fine-tune navigation.
+3. Performance optimizations through lazy loading and avoiding full-page reloads.
+
+## Basic Usage of the Link Component
+
+The `Link` component in Next.js provides SPA behavior by preventing full-page reloads. Instead of using `<a>` tags, we wrap the navigation paths with the `Link` component.
+
+### Example
+```tsx
+import Link from 'next/link';
+
+function Header() {
+  return (
+    <nav>
+      <ul>
+        <li><Link href="/">Home</Link></li>
+        <li><Link href="/shop">Shop</Link></li>
+        <li><Link href="/career">Career</Link></li>
+      </ul>
+    </nav>
+  );
+}
+```
+
+This approach allows efficient, client-side navigation and enhances performance by avoiding full-page reloads.
+
+## `scroll` Attribute
+
+By default, Next.js scrolls to the top of the page after each navigation. You can prevent this by setting `scroll` to `false`, which retains the scroll position between navigations.
+
+### Example
+```tsx
+<Link href="/about" scroll={false}>About</Link>
+```
+
+In this case, if the user scrolls down on a page and navigates, the scroll position will persist, which can be useful for specific UX scenarios.
+
+## `prefetch` Attribute
+
+The `prefetch` attribute, when set to `true`, preloads the linked page’s data when the link enters the viewport, providing faster navigation. This is particularly effective in production mode and on internal links.
+
+### Example
+```tsx
+<Link href="/card" prefetch={true}>Card</Link>
+```
+
+When you scroll down and the link becomes visible, the page will be prefetched in the background.
+
+**Note**: To see `prefetch` in action, ensure the app is running in production mode.
+
+## `replace` Attribute
+
+The `replace` attribute prevents the current navigation from being added to the browser’s history stack. This is useful if you want to avoid cluttering the user’s back-button history with trivial navigation changes.
+
+### Example
+```tsx
+<Link href="/home" replace={true}>Home</Link>
+```
+
+Using `replace={true}` avoids adding the navigation entry to the history stack, which is ideal for certain interactions like opening a modal or viewing dynamic content in a way that doesn’t interfere with navigation history.
+
+## Optimizing Next.js with Link Component
+
+By understanding these attributes (`scroll`, `prefetch`, and `replace`), you can optimize your Next.js application to deliver a smooth, SPA-like experience. For large applications, using `Link` effectively can significantly enhance performance and user satisfaction.
+
+Stay tuned for more advanced topics on the Next.js `Link` component, including handling dynamic routes.
 
 <LessonNavigation nextUrl={'/nextjs-15/userouter-hook'} nextText={'How to use the useRouter hook in Next.js 15'} prevUrl={'/nextjs-15/templates-in-nextjs'} prevText={'Templates in Next.js 15 and their difference with Layouts'}/>
