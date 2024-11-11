@@ -6,4 +6,136 @@ export const metadata={
 }
 
 
+# How to Handle Unexpected Errors in Next.js 15
+In web applications, there are two primary types of errors: **expected** and **unexpected**. Expected errors are predictable issues that we anticipate and catch using `try-catch` blocks. However, **unexpected errors** often slip through despite our best attempts to manage them. In **Next.js**, handling these unexpected errors is simplified through error handling files, allowing for a more robust and user-friendly error handling experience.
+<iframe width="560" height="315" src="https://www.youtube.com/embed/za2xDVxlK0A?si=HibIQUYV-eGLtAhO" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+## Differentiating Expected and Unexpected Errors
+
+Expected errors are those that we can anticipate based on code logic and try to manage. However, certain corner cases may evade these checks, leading to unexpected errors. Next.js provides a convention of **error files** (`error.tsx`) placed alongside pages to catch such exceptions during the rendering phase. This file replaces the default Next.js error screen with a customizable user interface.
+
+To simulate an unexpected error, try introducing an error on purpose. Here’s a way to create and render an error file in Next.js:
+
+```tsx
+// pages/career/error.tsx
+'use client';
+
+export default function ErrorPage({ error, reset }) {
+  return (
+    <div>
+      <h1>An error occurred</h1>
+      <p>{error.message}</p>
+      <button onClick={() => reset()}>Try Again</button>
+    </div>
+  );
+}
+```
+
+In this example, the `ErrorPage` component takes two parameters: `error` (containing error information) and `reset` (a function that allows retrying).
+
+## Error Handling Levels in Next.js
+
+In Next.js, error files can exist at multiple levels in the directory structure:
+
+1. **Page Level**: Placing an `error.tsx` file next to a page file, such as `career.tsx`, captures errors specifically on that page.
+2. **Global Level**: Moving the error file to a root level allows it to capture errors across multiple routes.
+
+Next.js attempts to catch errors at the page level first; if none exists, it moves up to the global error file.
+
+## Leveraging Parameters in the Error Component
+
+The `error` component receives two main parameters:
+
+- `error`: Contains details about the error, including a `digest` property, a unique identifier that connects errors from the server to the client.
+- `reset`: A function that can be called to attempt re-rendering the component without needing a full page refresh.
+
+For example, you could render the error message and offer a reset option using the `reset` function:
+
+```tsx
+export default function ErrorPage({ error, reset }) {
+  return (
+    <div>
+      <h1>Error Occurred</h1>
+      <p>{error.message}</p>
+      <button onClick={reset}>Try Again</button>
+    </div>
+  );
+}
+```
+
+## Using Error Digests for Debugging
+
+In production, error digests provide a secure way to track errors without exposing sensitive stack traces to the client. To view detailed error information, including the stack trace, inspect the server logs. Here’s an example of logging an error digest:
+
+```tsx
+import { useEffect } from 'react';
+
+export default function ErrorPage({ error, reset }) {
+  useEffect(() => {
+    console.error(`Digest: ${error.digest}`, error);
+  }, [error]);
+
+  return (
+    <div>
+      <h1>Error Occurred</h1>
+      <p>{error.message}</p>
+      <button onClick={reset}>Try Again</button>
+    </div>
+  );
+}
+```
+
+This setup logs the error digest to the console, allowing developers to correlate errors across the client and server.
+
+## Resetting Components on Error
+
+The `reset` function helps to attempt recovery by re-rendering the component. This is particularly useful when errors are intermittent or involve external APIs. Here’s an example that uses a random number to simulate an error:
+
+```tsx
+// error.tsx
+"use client";
+
+export default function ErrorPage({ error, reset }) {
+  return (
+    <div>
+      <h2>Oops! Something went wrong.</h2>
+      <p>{error.message}</p>
+      <button onClick={() => reset()}>Retry</button>
+    </div>
+  );
+}
+
+// SomePage.js
+import React, { useState, useEffect } from "react";
+
+export default function SomePage() {
+  const [shouldError, setShouldError] = useState(Math.random() > 0.5);
+
+  useEffect(() => {
+    if (shouldError) {
+      throw new Error("Random error occurred!");
+    }
+  }, [shouldError]);
+
+  return <div>Successfully loaded content!</div>;
+}
+```
+
+In this example, `SomePage` throws an error with a 50% chance every time it mounts. By clicking “Retry” in the error page, `reset` attempts to render `SomePage` again. If the error condition (`shouldError`) does not reoccur, the component will successfully render, allowing users to recover without reloading the entire application.
+
+## Production Error Handling in Next.js
+
+In production, Next.js reduces error verbosity by omitting sensitive data and stack traces from the client. This prevents exposing vulnerabilities, while still logging detailed information server-side for debugging. To run the application in production, use:
+
+```bash
+npm run build && npm run start
+```
+
+This command builds and starts the production server, allowing you to test how errors are displayed differently compared to development.
+
+## Summary
+
+Managing unexpected errors in Next.js is streamlined through error files that replace default error pages. By leveraging these files and using parameters like `error` and `reset`, you can build custom, user-friendly error handling interfaces, providing a smoother experience for end-users and simplified debugging for developers.
+
+
 <LessonNavigation nextUrl={'/nextjs-15/show-loading'} nextText={'Show Loading at the Route Segment in Next.js 15'} prevUrl={'/nextjs-15/browser-pushstate'} prevText={'Work with the Browser history and pushState function in Next.js'}/>

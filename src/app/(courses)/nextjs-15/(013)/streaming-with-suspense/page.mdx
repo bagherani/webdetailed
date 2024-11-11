@@ -6,4 +6,76 @@ export const metadata={
 }
 
 
+
+# How Suspense Works in Next.js
+React Suspense is a powerful way to optimize loading states, and in Next.js, we can use Suspense to manage asynchronous tasks more efficiently, enhancing page performance and SEO. While page-level Suspense is useful, applying it to specific components, like a comments or reviews section, can significantly improve user experience by streaming content as it becomes available, rather than holding up the entire page.
+<iframe width="560" height="315" src="https://www.youtube.com/embed/mUSnoW15lzY?si=JpQFlOJsyZbUg9zB" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+In Next.js, pages doing asynchronous jobs—like API calls—can be wrapped in Suspense to trigger a loading fallback. At the page level, this means loading states are shown until all necessary data is ready. However, component-level Suspense allows for independent loading states, enabling sections of the page to render as data arrives without blocking the entire layout. This approach uses streaming, where Next.js serves the primary content while keeping the connection open for other parts, such as reviews, to load later.
+
+## Component-Level Suspense
+
+For content that doesn’t need to load immediately (e.g., reviews), we can wrap components in React Suspense and control loading fallbacks independently. Here's an example where the `Review` component fetches data with a delay, wrapped in a Suspense component with a custom skeleton loader as a fallback:
+
+```tsx
+import React, { Suspense } from 'react';
+import SkeletonLoader from './SkeletonLoader';
+import Review from './Review';
+
+function ProductPage() {
+  return (
+    <div>
+      <h1>Product Details</h1>
+      <Suspense fallback={<SkeletonLoader />}>
+        <Review />
+      </Suspense>
+    </div>
+  );
+}
+export default ProductPage;
+```
+
+Here, we wrap `Review` in Suspense, passing `<SkeletonLoader />` as the fallback. When the review data is loading, users see a skeleton instead of a blank space, improving perceived performance.
+
+## Streaming Components with Suspense
+
+Streaming allows Next.js to keep the server connection open until all Suspense components are ready. This way, the primary content is served immediately, but components wrapped in Suspense can load later as they resolve. For instance, Next.js will send initial HTML to users immediately, including all critical parts, while the `Review` component loads asynchronously.
+
+This streaming process is valuable for SEO since delayed content (like reviews) still appears in the HTML source once it’s fully loaded, ensuring search engines can index the complete content. The following example illustrates how a skeleton loader gives way to the actual content once the data is fetched:
+
+```tsx
+// Example Review Component with Data Fetching
+
+// Next.js specific async component
+
+async function fetchReviews() {
+  // Simulate an async API fetch
+  await new Promise((res) => setTimeout(res, 3000)); // Simulated delay
+  return [
+    { id: 1, content: "Great product!" },
+    { id: 2, content: "Very useful." },
+  ];
+}
+
+export default async function Review() {
+  const reviews = await fetchReviews();
+
+  return (
+    <ul>
+      {reviews.map((review) => (
+        <li key={review.id}>{review.content}</li>
+      ))}
+    </ul>
+  );
+}
+```
+
+Here, we simulate an API call with a delay and set a fallback skeleton. Once the review data is ready, the skeleton is replaced with actual reviews.
+
+## Inspecting the Streaming in the Network Panel
+
+When streaming is active, the network request for the page remains open until all Suspense-wrapped components resolve. You can observe this by looking at the network panel in the browser’s developer tools. Until the data for Suspense components is ready, the connection stays open, and once resolved, it updates the content seamlessly.
+
+This method not only improves user experience by avoiding blank content during load times but also retains SEO benefits by serving a complete HTML output as soon as possible. Next.js’s streaming support with Suspense is a valuable tool for optimizing both performance and SEO in React applications.
+
 <LessonNavigation nextUrl={'/nextjs-15/nextjs-redirections'} nextText={'Master Next.js Redirections: A Complete Guide to All 5 Redirection Methods with Examples'} prevUrl={'/nextjs-15/show-loading'} prevText={'Show Loading at the Route Segment in Next.js 15'}/>

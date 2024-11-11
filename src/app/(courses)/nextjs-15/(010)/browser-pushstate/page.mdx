@@ -7,5 +7,119 @@ export const metadata={
 
 # Work with the Browser history and pushState function in Next.js
 
+When building interactive web applications, efficient client-side navigation is essential. Next.js offers powerful tools to manage URL states, allowing for dynamic and responsive page elements without requiring page reloads. One such tool is the `window.history` API, which enables you to manipulate the browser history state and update the URL seamlessly. This article will guide you through using `pushState` to create dynamic modals with Tailwind CSS and manage their states efficiently in Next.js, inspired by the Google Images preview experience.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/SIpldx3OIGs?si=H9eo_9pz7CmKHJrC" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+## Working with the `window.history` API
+
+To enhance the user experience, we’ll explore the `window.history.pushState()` method. This function allows you to push a new state to the browser history without reloading the page. Let’s implement this in a gallery-style preview modal, ensuring it behaves like native navigation, even using the back and forward buttons to open and close modals.
+
+### Step 1: Building the Layout with Tailwind CSS
+
+First, we’ll create a responsive grid layout with Tailwind CSS, reserving space for a preview modal that appears on item selection. By dynamically adjusting the grid columns, the layout adapts based on the modal state.
+
+```tsx
+<div className="grid grid-cols-3 gap-4">
+  <div className="col-span-2">
+    {/* Gallery items go here */}
+  </div>
+  <div className={`col-span-1 ${isPreviewOpen ? 'block' : 'hidden'}`}>
+    {/* Modal content here */}
+  </div>
+</div>
+```
+
+### Step 2: Implementing `pushState` for Modal State Management
+
+When a user selects an item, we’ll open a modal by updating the URL state. This is done using `window.history.pushState`, which can add query parameters like `isPreviewOpen=true` without a page reload.
+
+```tsx
+function openModal() {
+  window.history.pushState({}, '', '?isPreviewOpen=true');
+  setIsPreviewOpen(true);
+}
+
+function closeModal() {
+  window.history.pushState({}, '', '?isPreviewOpen=false');
+  setIsPreviewOpen(false);
+}
+```
+
+This code updates the URL query parameters, preserving the user’s navigation flow. Clicking the back button reverses the `pushState` and closes the modal, making the experience seamless.
+
+### Step 3: Making It React to URL Changes with `useSearchParams`
+
+In Next.js, you can use the `useSearchParams` hook to manage URL query parameters and observe their changes. By monitoring the `isPreviewOpen` parameter, we can determine whether to show the preview modal based on the current URL state.
+
+```tsx
+import { useSearchParams } from 'next/navigation';
+
+const isPreviewOpen = searchParams.get('isPreviewOpen') === 'true';
+```
+
+With this approach, the URL directly dictates the modal’s open/closed state. This persistence allows the modal state to survive page refreshes, providing a consistent user experience.
+
+### Step 4: Setting up State-Dependent Components with `useEffect`
+
+To track and respond to URL changes dynamically, you can combine `useEffect` with `useSearchParams`. Whenever the URL changes, our component re-renders accordingly.
+
+```tsx
+import { useEffect, useState } from 'react';
+
+const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+
+useEffect(() => {
+  const previewState = searchParams.get('isPreviewOpen') === 'true';
+  setIsPreviewOpen(previewState);
+}, [searchParams]);
+```
+
+This approach keeps our UI state in sync with the URL, allowing for dynamic behavior based on the `window.history` state.
+
+### Step 5: Managing State Data with `window.history.state`
+
+The `window.history.pushState` function accepts a data parameter that can be used to store additional information. For example, when opening a specific item in the modal, you can pass the item ID and retrieve it later without cluttering the URL.
+
+```tsx
+function openItemPreview(itemId) {
+  window.history.pushState({ itemId }, '', `?isPreviewOpen=true`);
+}
+
+function getPreviewItem() {
+  const state = window.history.state;
+  return state ? state.itemId : null;
+}
+```
+
+Using `window.history.state` enables you to store additional data about the selected item without modifying the URL further, keeping the navigation cleaner and more organized.
+
+### Observing State Changes with `useEffect`
+
+Next.js doesn’t automatically re-render components when `window.history.state` changes, so you’ll need to manually observe these changes. Here’s how you can set up `useEffect` to watch for changes in `window.history.state`.
+
+```tsx
+useEffect(() => {
+  const handleStateChange = () => {
+    const state = window.history.state;
+    if (state && state.itemId) {
+      setSelectedItem(state.itemId);
+    }
+  };
+  window.addEventListener('popstate', handleStateChange);
+
+  return () => {
+    window.removeEventListener('popstate', handleStateChange);
+  };
+}, []);
+```
+
+Adding an event listener for `popstate` keeps the component updated as the user navigates back and forth, retrieving the current state seamlessly.
+
+## Wrapping Up
+
+The `window.history` API allows for efficient client-side navigation, enabling developers to build smooth, dynamic experiences in Next.js. By combining `pushState` with `useSearchParams` and `useEffect`, you can ensure that stateful UI components, like modals or sidebars, persist across page refreshes and adapt to URL changes responsively.
+
+This approach not only enhances navigation but also improves user experience by making it intuitive and visually cohesive.
 
 <LessonNavigation nextUrl={'/nextjs-15/handle-errors'} nextText={'How to Handle Unexpected Errors in Next.js 15'} prevUrl={'/nextjs-15/userouter-hook'} prevText={'How to use the useRouter hook in Next.js 15'}/>
