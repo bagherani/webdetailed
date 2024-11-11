@@ -14,7 +14,7 @@ export const LessonNavigation = ({
   return (
     <div className="flex flex-row w-full">
       {prevText && prevUrl && (
-        <div className="me-auto w-1/3 mt-5 p-3 border rounded border-gray-500">
+        <div className="me-auto w-2/3 lg:w-1/3 mt-5 p-3 border rounded border-gray-500">
           <span className="block">Previous Lesson:</span>
           <Link className="inline-block" href={prevUrl}>
             {prevText}
@@ -22,7 +22,7 @@ export const LessonNavigation = ({
         </div>
       )}
       {nextText && nextUrl && (
-        <div className="ms-auto w-1/3 mt-5 p-3 border rounded border-gray-500">
+        <div className="ms-auto w-2/3 lg:w-1/3 mt-5 p-3 border rounded border-gray-500">
           <span className="block">Next Lesson:</span>
           <Link className="inline-block" href={nextUrl}>
             {nextText}
