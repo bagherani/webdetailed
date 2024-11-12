@@ -6,4 +6,101 @@ export const metadata={
 }
 
 
+# Route Groups in Next.js: Organize Pages, Control URLs, & Create Unique Layouts
+Route groups in Next.js provide an effective way to organize large projects by structuring folder hierarchies without affecting URLs. By wrapping folder names in parentheses, route groups help group related pages logically without changing the URL structure. 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/OK7JFP4jaR0?si=KcdYgdQRwSwkvXvu" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+## Common Problems Solved by Route Groups
+
+In large projects, creating dedicated folders within the `app` directory to organize sections (e.g., `webshop`, `blog`) often leads to unwanted URL segments. For example, placing shopping pages in an `app/webshop` folder creates URLs like `/webshop/shop` instead of just `/shop`. By using route groups, you can avoid adding these folder names to URLs. Here's how:
+
+```tsx
+// Folder structure
+app
+├── (webshop)
+│   ├── shop
+│   └───── page.tsx
+├── (blog)
+│   ├── posts
+│   └───── page.tsx
+
+// Access these routes directly without the group names:
+// /shop and /posts, instead of /webshop/shop or /blog/posts
+```
+
+## Benefits of Layouts in Route Groups
+
+With route groups, you can create dedicated layouts for each section of your application. This is particularly useful for large sites where different sections (like a webshop and a blog) need different layout components. Each route group can have its own layout file:
+
+```tsx
+// In app/(webshop)/layout.tsx
+export default function WebshopLayout({ children }) {
+  return (
+    <div>
+      <h1>Webshop Layout</h1>
+      {children}
+    </div>
+  );
+}
+
+// In app/(blog)/layout.tsx
+export default function BlogLayout({ children }) {
+  return (
+    <div>
+      <h1>Blog Layout</h1>
+      {children}
+    </div>
+  );
+}
+```
+
+By assigning unique layouts to route groups, Next.js ensures each section has a tailored user experience, displaying its specific layout without affecting other parts of the application.
+
+## Multiple Root Layouts
+
+With route groups, each folder at the root level can be treated as its own root layout, allowing you to manage HTML and body tags uniquely within each layout. For example:
+
+```tsx
+// app/(webshop)/layout.tsx
+export default function WebshopRootLayout({ children }) {
+  return (
+    <html>
+      <body>
+        <h1>Webshop Root Layout</h1>
+        {children}
+      </body>
+    </html>
+  );
+}
+
+// app/(blog)/layout.tsx
+export default function BlogRootLayout({ children }) {
+  return (
+    <html>
+      <body>
+        <h1>Blog Root Layout</h1>
+        {children}
+      </body>
+    </html>
+  );
+}
+```
+
+Each layout now has independent control over the page structure. This setup is helpful when you have sections that require different global settings or styling.
+
+## Handling Home Page Routing in Route Groups
+
+When no pages are at the root level and everything is grouped within folders, Next.js requires at least one `page.tsx` at some level to serve as the homepage. This can be handled by placing a home page in one of the groups.
+
+```tsx
+// app/(blog)/page.tsx
+export default function BlogHomePage() {
+  return <div>Welcome to the Blog Home Page</div>;
+}
+```
+
+## Final Thoughts on Route Groups in Next.js
+
+Using route groups is a powerful way to manage folder structures in Next.js without compromising URL clarity. By grouping related content, setting unique layouts, and handling multiple root layouts, you can create scalable, efficient, and well-organized applications. Route groups simplify complex projects, enabling developers to define logical folder hierarchies that enhance both the user experience and project maintainability.
+
 <LessonNavigation nextUrl={'/nextjs-15/project-organization'} nextText={'Optimal Folder Structure in Next.js: Pages, Routes, Components, and Best Practices Explained'} prevUrl={'/nextjs-15/nextjs-redirections'} prevText={'Master Next.js Redirections: A Complete Guide to All 5 Redirection Methods with Examples'}/>
