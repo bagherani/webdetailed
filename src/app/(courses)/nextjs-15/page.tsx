@@ -85,6 +85,7 @@ export default function NextJS() {
             Dynamic routes in Next.js
           </Link>
         </li>
+        <li>More are coming...</li>
       </ol>
     </div>
   );
