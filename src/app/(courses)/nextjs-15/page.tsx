@@ -85,6 +85,11 @@ export default function NextJS() {
             Dynamic routes in Next.js
           </Link>
         </li>
+        <li>
+          <Link href="/nextjs-15/parallel-routes">
+            Parallel routes in Next.js
+          </Link>
+        </li>
         <li>More are coming...</li>
       </ol>
     </div>
