@@ -1,0 +1,94 @@
+import { LessonNavigation } from "@/components/lesson-navigation";
+
+export const metadata={
+  title : "Intercepting Routes in Next.js",
+  description: ""
+}
+
+
+# Understanding Route Interception in Next.js
+Route interception in Next.js is a powerful technique that allows you to modify the default behavior of routing. Instead of straightforwardly navigating to a new page, you can intercept the route to display custom content such as modals or sidebars, all while staying on the same page. This feature is particularly useful for dynamic user experiences.
+<iframe width="560" height="315" src="https://www.youtube.com/embed/QBMbUwP-pj8?si=a8X-TnO62EL0s21V" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+---
+
+## The Basics of Route Interception
+
+In a standard Next.js application, navigation to a new URL typically renders the corresponding page. However, route interception enables rendering specific components, like modals, in parallel with the original page layout. This is achieved using **parallel routes** and **folder conventions**.
+
+### Example Scenario: Gallery with Modal View
+
+Suppose you have a `Gallery` page displaying a list of photos. Clicking on a photo shows a modal without navigating away from the `Gallery` page. Here's how you can implement it:
+
+1. **Gallery Structure:**
+   - Define a `gallery` page with static content.
+   - Use links for each photo pointing to `/gallery/photo/[photoId]`.
+
+2. **Modal Implementation:**
+   - Create a `@modal` folder in your `app` directory for parallel routing.
+   - Define a `photo` dynamic route under this folder.
+   - Render the modal content based on the URL using `layout` and `props`.
+
+### Code Snippet: Gallery Layout
+
+```tsx
+// app/gallery/layout.tsx
+import { useRouter } from 'next/router';
+
+export default function GalleryLayout({ children, modal }) {
+  return (
+    <div>
+      <div>{children}</div>
+      {modal && <div className="modal">{modal}</div>}
+    </div>
+  );
+}
+```
+
+---
+
+## Dynamic URL Management
+
+Using interceptors, you can modify URLs without full navigation. For instance, clicking a photo updates the URL to `/photo/[photoId]`, but the modal is rendered in the current layout. This ensures:
+
+- **URL Sharing:** The updated URL can be shared, allowing users to view the modal content directly.
+- **Refresh Handling:** Reloading the page loads the intercepted route's content.
+
+### Configuring Route Interception
+
+Use **folder naming conventions**:
+   - Use dots `(..)` before the folder name to define routing levels.
+   - Handle routing logic in the layout file.
+
+### Code Snippet: Intercepting Photo Route
+
+```tsx
+// app/gallery/(..)photo/page.tsx
+import PhotoModal from './PhotoModal';
+
+export default function PhotoInterceptingRoute({ children }) {
+  return (
+    <div>
+      <PhotoModal />
+    </div>
+  );
+}
+```
+
+---
+
+## Advanced Use Cases
+
+This approach isn't limited to modals. Other potential use cases include:
+
+1. **Shopping Cart:** Display a cart sidebar while keeping the user on the current page.
+2. **Reviews Section:** Show product reviews in a popup without leaving the product page.
+3. **Nested Content:** Render nested layouts dynamically based on the URL.
+
+---
+
+## Conclusion
+
+Route interception in Next.js offers developers flexibility to build highly interactive applications. By leveraging parallel routes and dynamic URL handling, you can enhance the user experience while maintaining consistent navigation and refresh behavior. Try it out in your projects for features like modals, sidebars, or nested content displays.
+
+<LessonNavigation nextUrl={''} nextText={''} prevUrl={'/nextjs-15/parallel-routes'} prevText={'Parallel Routes in Next.js'}/>

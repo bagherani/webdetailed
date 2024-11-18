@@ -90,6 +90,11 @@ export default function NextJS() {
             Parallel routes in Next.js
           </Link>
         </li>
+        <li>
+          <Link href="/nextjs-15/intercepting-routes">
+            Intercepting routes in Next.js
+          </Link>
+        </li>
         <li>More are coming...</li>
       </ol>
     </div>
