@@ -95,6 +95,14 @@ export default function NextJS() {
             Intercepting routes in Next.js
           </Link>
         </li>
+        <li>
+          <Link href="/nextjs-15/route-handlers">
+            Route handlers in Next.js
+          </Link>
+        </li>
+        <li>
+          <Link href="/nextjs-15/middleware">Next.js Middlewares</Link>
+        </li>
         <li>More are coming...</li>
       </ol>
     </div>
