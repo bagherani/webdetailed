@@ -1,0 +1,170 @@
+import { LessonNavigation } from "@/components/lesson-navigation";
+
+export const metadata={
+  title : "Route Handlers in Next.js",
+  description: "Route handlers in Next.js 15 are designed to handle HTTP requests"
+}
+
+# Route Handlers in Next.js
+Route handlers in Next.js 15 are designed to handle HTTP requests, enabling you to create API-like endpoints without requiring a user interface. These endpoints can accept requests using various HTTP methods, such as `GET`, `POST`, `PUT`, and more, and they respond using standard JavaScript API interfaces like `Response`. Below is an in-depth guide to working with route handlers in Next.js.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/ZOMHrFCCUGY?si=eIzzRON2zUF4KuL9" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+## Creating a Basic Route Handler
+
+To set up a route handler, create a folder and add a `route.js` or `route.ts` file. Inside this file, define a function for each HTTP method you need (e.g., `GET`, `POST`). Here's an example:
+
+```tsx
+// app/api/hello/route.js
+export async function GET(request) {
+  return new Response(JSON.stringify({ message: 'Hello, World!' }), {
+    headers: { 'Content-Type': 'application/json' },
+  });
+}
+```
+
+Access this endpoint by visiting `/api/hello` in your browser or making an HTTP request.
+
+## Handling Different HTTP Methods
+
+You can handle multiple HTTP methods within the same route file:
+
+```tsx
+export async function GET(request) {
+  return new Response(JSON.stringify({ method: 'GET' }), {
+    headers: { 'Content-Type': 'application/json' },
+  });
+}
+
+export async function POST(request) {
+  return new Response(JSON.stringify({ method: 'POST' }), {
+    headers: { 'Content-Type': 'application/json' },
+  });
+}
+```
+
+If a method is not implemented, Next.js automatically responds with a `405 Method Not Allowed` error.
+
+## Dynamic Routes in Route Handlers
+
+Dynamic routes let you extract parameters from the URL. Define a folder with square brackets to denote a dynamic segment, and access parameters from the `params` object.
+
+```tsx
+// app/api/user/[id]/route.js
+export async function GET(request, { params }) {
+  const { id } = await params;
+  return new Response(JSON.stringify({ userId: id }), {
+    headers: { 'Content-Type': 'application/json' },
+  });
+}
+```
+
+Visit `/api/user/123` to see the response: `{ "userId": "123" }`.
+
+## Receiving Data in Handlers
+
+Next.js route handlers support multiple ways of receiving data:
+
+### 1. Query Strings
+Query strings can be extracted using the `nextUrl.searchParams` property:
+
+```tsx
+export async function GET(request) {
+  const query = request.nextUrl.searchParams.get('q');
+  return new Response(JSON.stringify({ query }), {
+    headers: { 'Content-Type': 'application/json' },
+  });
+}
+```
+
+Access this via `/api/search?q=example`.
+
+### 2. Form Data
+For `POST` requests with form data, use the `request.formData()` method:
+
+```tsx
+export async function POST(request) {
+  const formData = await request.formData();
+  const name = formData.get('name');
+  const age = formData.get('age');
+  return new Response(JSON.stringify({ name, age }), {
+    headers: { 'Content-Type': 'application/json' },
+  });
+}
+```
+
+Send form data with keys like `name` and `age`.
+
+### 3. JSON Payloads
+To handle JSON data, use the `request.json()` method:
+
+```tsx
+export async function POST(request) {
+  const data = await request.json();
+  return new Response(JSON.stringify(data), {
+    headers: { 'Content-Type': 'application/json' },
+  });
+}
+```
+
+Post a JSON payload like `{ "name": "Mohi", "age": 37 }` and receive it back in the response.
+
+## Sending Responses to Clients
+
+You can return various types of responses using the `Response` class:
+
+### JSON Response
+Use `Response.json` to send JSON data:
+
+```tsx
+export async function GET(request) {
+  return Response.json({ success: true });
+}
+```
+
+### Custom Headers and Status Codes
+Add headers or custom status codes to your response:
+
+```tsx
+export async function GET(request) {
+  return new Response('Not Found', {
+    status: 404,
+    headers: { 'X-Custom-Header': 'Example' },
+  });
+}
+```
+
+### Plain Text Responses
+Send plain text by creating a `Response` object with a string:
+
+```tsx
+export async function GET(request) {
+  return new Response('Hello, World!', {
+    headers: { 'Content-Type': 'text/plain' },
+  });
+}
+```
+
+## Returning Serialized JSON
+Ensure correct content types when serializing objects:
+
+```tsx
+export async function GET(request) {
+  const data = { key: 'value' };
+  return new Response(JSON.stringify(data), {
+    headers: { 'Content-Type': 'application/json' },
+  });
+}
+```
+
+## Key Takeaways
+
+- **Route Structure:** Use folders to organize your API routes, with `route.js` or `route.ts` files.
+- **Dynamic Routing:** Extract parameters from dynamic route segments.
+- **Handling Data:** Use `query strings`, `form data`, or `JSON payloads` to send data to handlers.
+- **Custom Responses:** Send JSON, plain text, or custom headers and status codes to clients.
+
+Explore the official [Next.js documentation](https://nextjs.org/docs) for more details on route handlers.
+
+
+<LessonNavigation nextUrl={'/nextjs-15/middleware'} nextText={'Middleware in Next.js'} prevUrl={'/nextjs-15/intercepting-routes'} prevText={'Intercepting Routes in Next.js'}/>
