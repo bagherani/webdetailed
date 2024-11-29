@@ -1,0 +1,141 @@
+import { LessonNavigation } from "@/components/lesson-navigation";
+
+export const metadata={
+  title : "Middleware in Next.js",
+  description: "Middleware in Next.js is a powerful feature that sits in the request-response pipeline immediately after the `next.config.js`"
+}
+
+# Understanding Next.js Middleware
+
+Middleware in Next.js is a powerful feature that sits in the request-response pipeline immediately after the `next.config.js` is processed. It allows developers to intercept requests before they reach route handlers or pages, enabling actions like rejection, redirection, rewriting, or modifying requests.
+<iframe width="560" height="315" src="https://www.youtube.com/embed/OCtnBdeIoLk?si=lqGGGohD68a1EUBv" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+## How to Create a Middleware
+
+To add middleware, create a `middleware.js` or `middleware.ts` file in the `src` folder. The middleware function handles the request and must return a `NextResponse`. Here's the simplest middleware example:
+
+```tsx
+import { NextResponse, type NextRequest } from 'next/server';
+
+export function middleware(request: NextRequest) {
+  return NextResponse.next(); // Passes the request to the next handler
+}
+```
+
+This basic middleware forwards requests to the next level in the pipeline, whether that’s a page, a static file, or a route handler.
+
+## Filtering Requests with Matchers
+
+By default, middleware processes all requests, including static files. To control which requests are handled, export a `config` object with a `matcher` property:
+
+```tsx
+export const config = {
+  matcher: ['/admin/:path*'], // Matches all requests starting with /admin
+};
+```
+
+You can also exclude requests by using regular expressions:
+
+```tsx
+export const config = {
+  matcher: ['/(?!.*\\.(css|js|ico|png|jpg|jpeg|gif|svg)$).*'],
+};
+```
+
+This example excludes requests for common static assets.
+
+## Enhanced Request Object
+
+The request parameter in middleware is an enhanced version of the Fetch API's `Request` object. It includes additional properties, such as `nextUrl`, which simplifies operations like query parsing and path analysis.
+
+Example:
+
+```tsx
+import { NextResponse, type NextRequest } from 'next/server';
+
+export function middleware(request: NextRequest) {
+  console.log(request.nextUrl.pathname); // Logs the requested path
+  return NextResponse.next();
+}
+```
+
+## Redirects and Authorization
+
+Middleware can handle authentication and authorization by inspecting requests. Here's an example of redirecting unauthorized users:
+
+```tsx
+export function middleware(request) {
+  const token = request.headers.get('authorization');
+  if (!token || token !== '1234') {
+    return NextResponse.redirect(new URL('/login', request.url));
+  }
+  return NextResponse.next();
+}
+```
+
+This example redirects requests to `/admin` to a login page if the authorization token is invalid or missing.
+
+## Setting Headers and Cookies
+
+Middleware can modify response headers and set cookies before forwarding the response:
+
+```tsx
+import { NextResponse } from 'next/server';
+
+export function middleware(request) {
+  const response = NextResponse.next();
+  response.headers.set('X-Custom-Header', 'Hello');
+  response.cookies.set('myCookie', '123');
+  return response;
+}
+```
+
+## Logging Requests
+
+Middleware is an ideal place for logging. For instance, you can log all incoming requests:
+
+```tsx
+export function middleware(request) {
+  console.log(request.nextUrl.href);
+  return NextResponse.next();
+}
+```
+
+This is especially useful for analytics or monitoring purposes, but avoid adding complex logic as it can impact performance.
+
+## Dynamic Redirects
+
+Middleware supports dynamic redirects based on request conditions, such as path matching or headers:
+
+```tsx
+export function middleware(request) {
+  const oldUrls = {
+    '/old-page': '/new-page',
+    '/legacy': '/modern',
+  };
+
+  const newPath = oldUrls[request.nextUrl.pathname];
+  if (newPath) {
+    return NextResponse.redirect(new URL(newPath, request.url));
+  }
+  return NextResponse.next();
+}
+```
+
+## JSON and Custom Responses
+
+Middleware can return JSON responses or set specific HTTP status codes:
+
+```tsx
+import { NextResponse } from 'next/server';
+
+export function middleware(request) {
+  return new NextResponse(JSON.stringify({ message: 'Unauthorized' }), {
+    status: 401,
+    headers: { 'Content-Type': 'application/json' },
+  });
+}
+```
+
+
+<LessonNavigation nextUrl={''} nextText={''} prevUrl={'/nextjs-15/route-handlers'} prevText={'Route Handlers in Next.js'}/>
