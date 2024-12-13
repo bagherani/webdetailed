@@ -108,6 +108,11 @@ export default function NextJS() {
             Internationalizing Your Next.js Application
           </Link>
         </li>
+        <li>
+          <Link href="/nextjs-15/rendering">
+            Rendering, Server and Client Components
+          </Link>
+        </li>
         <li>More are coming...</li>
       </ol>
     </div>
