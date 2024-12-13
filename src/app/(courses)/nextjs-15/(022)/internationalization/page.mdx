@@ -1,0 +1,162 @@
+import { LessonNavigation } from "@/components/lesson-navigation";
+
+export const metadata={
+  title : "Internationalizing Your Next.js Application",
+  description: "Let's explore how to implement internationalization (i18n) in a Next.js app"
+}
+
+# Internationalizing Your Next.js Application
+
+When building a global application, it's essential to provide content tailored to users based on their language preferences. Let's explore how to implement internationalization (i18n) in a Next.js app, allowing users to view content in their preferred language and switch between supported locales.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/AlMeILdBlpw?si=ympM84yaoBSV8KQP" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+## Reading User Language Preferences
+
+Browsers send user language preferences through the `Accept-Language` header in HTTP requests. This header contains comma-separated language codes, often including a priority (q-factor). For example:
+
+```json
+{
+  "Accept-Language": "en-US,fa;q=0.9,en;q=0.8"
+}
+```
+
+The server can parse this header to determine the best-matching language based on supported locales.
+
+## Dynamic Routes for Localization
+
+To enable localization, include language codes in your app's URL structure, such as `/en/home` or `/fr/home`. Here's how to set up dynamic routing:
+
+1. Create a `[lang]` folder in the `app` directory.
+2. Move the `page.tsx` file into this folder.
+3. Update the dynamic route to handle language codes.
+
+Example route setup:
+
+```tsx
+// app/[lang]/page.tsx
+export default async function HomePage({ params }: { params: Promise<{ lang: string }> }) {
+  const lang = (await params).lang;
+  const content = lang === 'fr' ? "Page d'accueil" : "Home Page";
+  return <h1>{content}</h1>;
+}
+```
+
+## Loading Translations
+
+Instead of hardcoding strings, create JSON files for each language. For example:
+
+**`locales/en.json`:**
+```json
+{
+  "homepage": {
+    "title": "Home Page",
+    "description": "This is the English version."
+  }
+}
+```
+
+**`locales/fr.json`:**
+```json
+{
+  "homepage": {
+    "title": "Page d'accueil",
+    "description": "Ceci est la version française."
+  }
+}
+```
+
+Load these files dynamically based on the user's selected language.
+
+```tsx
+import en from '../locales/en.json';
+import fr from '../locales/fr.json';
+
+const translations = { en, fr };
+
+export function getTranslation(lang: string, key: string) {
+  return translations[lang]?.[key] || translations['en'][key];
+}
+```
+
+## Middleware for Language Detection
+
+Use Next.js middleware to redirect users to their preferred language based on the `Accept-Language` header:
+
+```tsx
+// middleware.ts
+import { NextResponse } from 'next/server';
+
+export function middleware(req: Request) {
+  const acceptLanguage = req.headers.get('accept-language') || '';
+  const supportedLanguages = ['en', 'fr'];
+  const userLanguages = acceptLanguage
+    .split(',')
+    .map((lang) => lang.split(';')[0].split('-')[0]);
+  
+  const bestMatch = supportedLanguages.find((lang) =>
+    userLanguages.includes(lang)
+  ) || 'en';
+
+  const url = new URL(req.url);
+  if (!supportedLanguages.some((lang) => url.pathname.startsWith(`/${lang}`))) {
+    return NextResponse.redirect(`${url.origin}/${bestMatch}${url.pathname}`);
+  }
+  return NextResponse.next();
+}
+```
+
+## Refactoring Translation Logic
+
+For scalability, create a translation service:
+
+```tsx
+// services/translationService.ts
+type SupportedLanguages = 'en' | 'fr';
+
+import en from '../locales/en.json';
+import fr from '../locales/fr.json';
+
+const locales = { en, fr };
+
+export const translationService = (lang: SupportedLanguages) => {
+  return {
+    t: (key: keyof typeof en) => locales[lang]?.[key] || locales['en'][key],
+  };
+};
+```
+
+Usage:
+
+```tsx
+import { translationService } from '../services/translationService';
+
+const { t } = translationService('fr');
+console.log(t('homepage').title); // "Page d'accueil"
+```
+
+## Enhancing Accessibility
+
+Set the `<html>` language attribute dynamically based on the user's selected language to improve accessibility:
+
+```tsx
+// app/layout.tsx
+export default function Layout({ children, params }: { children: React.ReactNode; params: { lang: string } }) {
+  const lang = params.lang || 'en';
+  return (
+    <html lang={lang}>
+      <body>{children}</body>
+    </html>
+  );
+}
+```
+
+## Tips for Larger Applications
+
+1. **Structured Translations:** Use libraries like `i18next` for complex translation needs, including parameterized strings.
+2. **Fallback Mechanisms:** Always provide a default language to ensure users see content, even if their preference isn't supported.
+3. **Nested Routes:** Structure folders to handle language codes for subpages, e.g., `/en/news` or `/fr/news`.
+
+By following these steps, you can implement efficient and scalable i18n in your Next.js application, delivering a seamless experience to users worldwide.
+
+<LessonNavigation nextUrl={''} nextText={''} prevUrl={'/nextjs-15/middleware'} prevText={'Middleware in Next.js'}/>

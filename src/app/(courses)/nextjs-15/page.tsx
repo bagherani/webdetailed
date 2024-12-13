@@ -103,6 +103,11 @@ export default function NextJS() {
         <li>
           <Link href="/nextjs-15/middleware">Next.js Middlewares</Link>
         </li>
+        <li>
+          <Link href="/nextjs-15/internationalization">
+            Internationalizing Your Next.js Application
+          </Link>
+        </li>
         <li>More are coming...</li>
       </ol>
     </div>
