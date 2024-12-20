@@ -1,0 +1,91 @@
+import { LessonNavigation } from "@/components/lesson-navigation";
+
+export const metadata={
+  title : "Partial Prerendering in Next.js",
+  description: "Partial prerendering is a technique that enables the generation of static assets for routes, even when they contain dynamic functions"
+}
+
+# What is Partial Prerendering?
+Partial prerendering is a technique that enables the generation of static assets for routes, even when they contain dynamic functions. This approach enhances the performance and scalability of web applications by combining static and dynamic content delivery.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/0EK_nUSmdwY?si=-dGb-MkomX0OyLTy" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+Next.js strives to generate as many static assets as possible during the build process, such as HTML, JavaScript, and CSS. These assets are deployed to a Content Delivery Network (CDN) for optimized performance. However, pages relying on dynamic functions—like cookies, headers, or real-time data—cannot be fully prerendered as static files.
+
+Partial prerendering solves this challenge by allowing the generation of static content while deferring dynamic content generation until runtime. This involves delivering static assets immediately and streaming dynamic data to the client as it becomes available.
+
+## Benefits of Partial Prerendering
+
+- **Improved Performance:** Static assets are served instantly from the CDN, reducing initial load times.
+- **Enhanced Scalability:** The ability to cache static files ensures efficient handling of high traffic volumes.
+- **User Experience:** By utilizing fallback elements such as skeleton screens, users perceive faster load times, even when dynamic content is still being fetched.
+
+## Implementing Partial Prerendering in Next.js
+
+Partial prerendering is an experimental feature in Next.js and requires specific setup steps to enable it.
+
+### Step 1: Install the Latest Canary Version
+
+Ensure you have the latest Canary version of Next.js installed. Run the following command to update your project:
+
+```bash
+npm install next@canary
+```
+
+### Step 2: Enable the Experimental Feature
+
+Modify your `next.config.js` file to enable the `experimental.ppr` flag. This activates the partial prerendering feature.
+
+```javascript
+const nextConfig = {
+  experimental: {
+    ppr: 'incremental',
+  },
+};
+```
+
+### Step 3: Configure Pages for Partial Prerendering
+
+For each page you want to partially prerender:
+
+1. Export a constant named `experimental_ppr` and set it to `true`.
+2. Wrap components that depend on dynamic functions using React's `Suspense` component. Provide a fallback UI, such as a loading indicator.
+
+Here’s an example setup:
+
+```tsx
+import React, { Suspense } from "react";
+
+export const experimental_ppr = true;
+
+function DynamicContent() {
+  const data = fetchDynamicData(); // Simulate fetching dynamic data.
+  return <div>{data}</div>;
+}
+
+export default function Page() {
+  return (
+    <div>
+      <h1>Static Content</h1>
+      <Suspense fallback={<div>Loading dynamic content...</div>}>
+        <DynamicContent />
+      </Suspense>
+    </div>
+  );
+}
+
+async function fetchDynamicData() {
+  // Simulate a server-side call to fetch data.
+  return "Dynamic data loaded!";
+}
+```
+
+### Step 4: Build and Deploy
+
+When you build your project (`npm run build`), Next.js generates static assets and stores them in the `.next/server/app` directory. These assets can be deployed to any CDN for immediate serving.
+
+## Final Thoughts
+
+Partial prerendering bridges the gap between static and dynamic content delivery. By leveraging this technique, you can ensure your application benefits from both the speed of static files and the flexibility of server-side rendering. As this feature evolves, it promises to make Next.js an even more powerful tool for building modern web applications.
+
+<LessonNavigation nextUrl={''} nextText={''} prevUrl={'/nextjs-15/rendering'} prevText={'A Deep Dive into Server and Client Components Rendering'}/>

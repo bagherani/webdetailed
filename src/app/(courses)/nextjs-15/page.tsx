@@ -113,6 +113,11 @@ export default function NextJS() {
             Rendering, Server and Client Components
           </Link>
         </li>
+        <li>
+          <Link href="/nextjs-15/partial-prerendering">
+            What is Partial Prerendering
+          </Link>
+        </li>
         <li>More are coming...</li>
       </ol>
     </div>
