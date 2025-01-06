@@ -118,6 +118,11 @@ export default function NextJS() {
             What is Partial Prerendering
           </Link>
         </li>
+        <li>
+          <Link href="/nextjs-15/data-fetching">
+            Data Fetching and Caching in Next.js
+          </Link>
+        </li>
         <li>More are coming...</li>
       </ol>
     </div>

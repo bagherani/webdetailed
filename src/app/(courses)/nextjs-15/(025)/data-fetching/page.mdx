@@ -1,0 +1,270 @@
+import { LessonNavigation } from "@/components/lesson-navigation";
+
+export const metadata={
+  title : "Data Fetching and Caching in Next.js",
+  description: "Learn how to fetch data on the server and client-side, use caching for improved performance, and implement best practices"
+}
+
+# Data Fetching and Caching in Next.js
+Dive deep into data fetching techniques in Next.js with this comprehensive guide. Learn how to fetch data on the server and client-side, use caching for improved performance, and implement best practices with tools like Zod and SWR. This tutorial covers server-side rendering, client-side data fetching, parallel data fetching, error handling, and more. Perfect for developers looking to optimize their Next.js applications and improve their data management skills.
+
+## Server-Side Data Fetching with Next.js
+<iframe width="560" height="315" src="https://www.youtube.com/embed/EnqATXsTfzA?si=9QREz-xd8WkmDKea" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+When building a modern web application, server-side data fetching is a common practice to gather information before delivering content to users. Next.js simplifies this by integrating the `fetch` API, along with features like caching, to enhance performance and developer experience.
+
+#### Basic Fetch Example on the Server
+
+To fetch data on the server, we call the `fetch` function with a URL. Here's a simple example of fetching blog posts:
+
+```tsx
+async function getPosts() {
+  const response = await fetch("https://api.example.com/posts");
+  const posts = await response.json();
+  return posts;
+}
+```
+
+The above function fetches posts, parses the JSON response, and returns it. This ensures that the data is ready when the page is rendered.
+
+#### Caching with the `fetch` API
+
+Next.js supports advanced caching mechanisms with the `fetch` API. By default, fetch requests in development are not cached. However, you can control caching behavior using the `cache` option:
+
+- **`force-cache`**: Caches the response and serves it from the cache.
+- **`no-store`**: Disables caching, ensuring fresh data is fetched for every request.
+
+Example with `force-cache`:
+
+```tsx
+const posts = await fetch("https://api.example.com/posts", {
+  cache: "force-cache",
+});
+```
+
+This stores the response in a cache file within the `.next` folder, reducing redundant network requests in production.
+
+#### Handling Dynamic Content
+
+For dynamic routes or data, you can explicitly mark a page as dynamic:
+
+```tsx
+export const dynamic = "force-dynamic";
+```
+
+This tells Next.js to always fetch fresh data, even during production builds.
+
+---
+
+### Validating and Typing API Responses
+
+Using third-party libraries like `zod`, you can validate and type-check the response data. Here's an example:
+
+1. Install `zod`:
+   ```bash
+   npm install zod
+   ```
+
+2. Define a schema and validate the response:
+
+```tsx
+import { z } from "zod";
+
+const PostSchema = z.object({
+  id: z.number(),
+  title: z.string(),
+  author: z.string(),
+});
+
+const PostsSchema = z.array(PostSchema);
+
+async function getValidatedPosts() {
+  const response = await fetch("https://api.example.com/posts");
+  const data = await response.json();
+  return PostsSchema.parse(data); // Validate and type-check
+}
+```
+
+This ensures your data matches the expected structure, reducing runtime errors.
+
+---
+
+### Caching Database Queries with `cache`
+
+To optimize server-side queries, React provides a `cache` function. It can memoize function results during the request-response cycle, preventing duplicate computations.
+
+Example:
+
+```tsx
+import { cache } from "react";
+
+const getUserById = cache(async (id) => {
+  const user = await db.getUser(id); // Simulated database query
+  return user;
+});
+```
+
+When `getUserById` is called multiple times within the same request cycle, the result is fetched only once, saving resources.
+
+#### Avoiding Multiple Cache Instances
+
+To ensure consistent caching, wrap your database functions in a shared object rather than creating new cache instances:
+
+```tsx
+const db = {
+  getUserById: cache(async (id) => {
+    const user = await dbQuery(id);
+    return user;
+  }),
+};
+
+const user = await db.getUserById(1);
+```
+
+This approach centralizes caching logic and avoids redundant data fetching.
+
+---
+
+### Best Practices for Data Fetching
+
+1. **Use Libraries for Efficiency**:
+   Tools like `SWR` and `React Query` simplify client-side data fetching with features like caching, revalidation, and optimistic updates.
+
+2. **Perform Parallel Fetching**:
+   Fetch multiple resources simultaneously using `Promise.all` for better performance.
+
+```tsx
+const [posts, users] = await Promise.all([
+  fetch("https://api.example.com/posts").then((res) => res.json()),
+  fetch("https://api.example.com/users").then((res) => res.json()),
+]);
+```
+
+3. **Validate Data**:
+   Always validate API responses, especially when dealing with external sources.
+
+## Fetching Data in Client-Side Components
+
+Fetching data on the client side in a React application involves certain considerations, especially regarding performance, error handling, and best practices. This guide explores various methods, highlighting the recommended approaches.
+
+### Direct Fetch with `useEffect`
+
+Using `fetch` within `useEffect` is the simplest way to fetch data in client-side components. However, it has limitations, such as lack of caching and the need for additional logic for error handling and loading states.
+
+#### Example Implementation
+
+```tsx
+"use client";
+
+import React, { useState, useEffect } from "react";
+
+const List = () => {
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("/api/users");
+        const data = await response.json();
+        setUsers(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  return (
+    <ul>
+      {users.map((user) => (
+        <li key={user.id}>
+          {user.name}, {user.age}
+        </li>
+      ))}
+    </ul>
+  );
+};
+
+export default List;
+```
+
+This approach works but is not ideal for several reasons:
+- It requires custom error and loading state handling.
+- The logic is tightly coupled to the component, making it less reusable.
+
+### Handling Cross-Origin Issues
+
+When fetching data from another domain, browsers may block the request due to CORS (Cross-Origin Resource Sharing) restrictions. To bypass this, you can proxy the request through a server-side API in your application.
+
+#### Example of a Proxy API
+
+```tsx
+import { NextResponse } from "next/server";
+
+export async function GET() {
+  const users = [{ id: 1, name: "John", age: 30 }, { id: 2, name: "Jane", age: 25 }];
+  return NextResponse.json(users);
+}
+```
+
+This API can be called from the client without encountering CORS issues.
+
+### Recommended Approach: Using SWR
+
+SWR (stale-while-revalidate) is a React hook library for data fetching that simplifies state management, caching, and revalidation.
+
+#### Installation
+
+Install SWR using npm:
+
+```bash
+npm install swr
+```
+
+#### Implementation with SWR
+
+```tsx
+"use client";
+
+import useSWR from "swr";
+
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
+const List = () => {
+  const { data: users, error, isLoading } = useSWR("/api/users", fetcher);
+
+  if (error) return <div>Error loading data.</div>;
+  if (isLoading) return <div>Loading...</div>;
+
+  return (
+    <ul>
+      {users.map((user) => (
+        <li key={user.id}>
+          {user.name}, {user.age}
+        </li>
+      ))}
+    </ul>
+  );
+};
+
+export default List;
+```
+
+SWR provides:
+- **Caching**: Prevents redundant API calls.
+- **Error Handling**: Built-in error states.
+- **Loading State**: Simple and declarative loading indicators.
+
+### Optimizing Data Fetching
+
+To further optimize data fetching, you can:
+1. **Separate Concerns**: Move data-fetching logic to a service layer.
+2. **Error Handling**: Use try-catch blocks with custom error messages.
+3. **Clean Architecture**: Format and prepare server data before consumption.
+
+
+## Conclusion
+Leveraging these techniques ensures a robust and efficient data fetching strategy in your Next.js applications. Whether working with APIs or databases, proper use of caching and validation can significantly improve your app's performance and maintainability.
+
+<LessonNavigation nextUrl={''} nextText={''} prevUrl={'/nextjs-15/partial-prerendering'} prevText={'What is Partial Prerendering'}/>
