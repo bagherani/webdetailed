@@ -1,0 +1,164 @@
+import { LessonNavigation } from "@/components/lesson-navigation";
+
+export const metadata={
+  title : "Server Actions and Mutations in Next.js",
+  description: "Server Actions in Next.js simplify server-side data handling and mutation by letting you define functions that execute exclusively on the server"
+}
+
+# What Are Server Actions?
+Server Actions in Next.js simplify server-side data handling and mutation by letting you define functions that execute exclusively on the server. This is particularly useful for scenarios like form submission or managing data state, reducing the overhead of API route creation. Here's a breakdown of how they work and how to use them effectively.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/V-26larX6Wc?si=GOxxXXlm-KcokkxN" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+Server actions are server-side functions invoked from the client or server. When triggered from the client, Next.js automatically generates an API endpoint for the action and calls it via a POST request.
+
+## Benefits of Server Actions
+
+- **Access to Dynamic Functions**: Use server-side functionalities like cookies and headers directly.
+- **Simplified Client Interaction**: Avoid manually setting up API routes; simply import and call server actions as functions.
+- **Integration with Forms**: Pass server actions directly to form `action` attributes for streamlined handling.
+
+## Implementing a Like Button with Server Actions
+
+### 1. Set Up the Server Action
+
+Create a dedicated server action file for the "like" functionality.
+
+```tsx
+'use server';
+
+export async function likeMovie(id: number) {
+  // Simulate database interaction
+  console.log(`Movie with ID ${id} liked!`);
+}
+```
+
+### 2. Create the Like Button Component
+
+Design a button that triggers the server action on click.
+
+```tsx
+'use client';
+
+import { likeMovie } from '@/serverActions/likeMovie';
+
+export default function LikeButton({ id }: { id: number }) {
+  const handleClick = async () => {
+    await likeMovie(id);
+    console.log(`Liked movie with ID ${id}`);
+  };
+
+  return <button onClick={handleClick}>Like</button>;
+}
+```
+
+### 3. Use the Component
+
+Render the `LikeButton` component in a page.
+
+```tsx
+import LikeButton from '@/components/LikeButton';
+
+export default function MoviesPage() {
+  const movies = [{ id: 1, title: 'Inception' }, { id: 2, title: 'Interstellar' }];
+
+  return (
+    <div>
+      <h1>Movies</h1>
+      <ul>
+        {movies.map((movie) => (
+          <li key={movie.id}>
+            {movie.title} <LikeButton id={movie.id} />
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+```
+
+## Handling Forms with Server Actions
+
+You can pass a server action as the `action` attribute of a form for automatic handling.
+
+### 1. Define the Server Action
+
+```tsx
+'use server';
+
+export async function addComment(formData: FormData) {
+  const comment = formData.get('comment');
+  console.log(`Comment received: ${comment}`);
+}
+```
+
+### 2. Create the Form Component
+
+```tsx
+'use client';
+
+import { addComment } from '@/serverActions/addComment';
+
+export default function CommentForm() {
+  return (
+    <form action={addComment}>
+      <textarea name="comment" placeholder="Write your comment"></textarea>
+      <button type="submit">Submit</button>
+    </form>
+  );
+}
+```
+
+## Adding Validation with `zod`
+
+To validate incoming data, use the `zod` library.
+
+```tsx
+import { z } from 'zod';
+
+const commentSchema = z.object({
+  comment: z.string().min(1, 'Comment is required'),
+});
+
+export async function addComment(formData: FormData) {
+  const comment = formData.get('comment');
+  const result = commentSchema.safeParse({ comment });
+
+  if (!result.success) {
+    throw new Error('Invalid comment');
+  }
+
+  console.log(`Valid comment: ${result.data.comment}`);
+}
+```
+
+## Leveraging `useActionState` for Feedback
+
+React's `useActionState` can help you provide user feedback on form submission.
+
+### Example Usage
+
+```tsx
+import { useActionState } from 'react';
+import { addComment } from '@/serverActions/addComment';
+
+export default function CommentForm() {
+  const [state, formAction, pending] = useActionState(addComment);
+
+  return (
+    <form action={formAction}>
+      <textarea name="comment" placeholder="Write your comment"></textarea>
+      <button type="submit" disabled={pending}>
+        {pending ? 'Submitting...' : 'Submit'}
+      </button>
+      {state?.error && <p className="error">{state.error}</p>}
+    </form>
+  );
+}
+```
+
+## Conclusion
+
+Server Actions streamline server-side operations in Next.js, enabling you to handle data efficiently and integrate seamlessly with forms and client components. By reducing the complexity of API management, they make developing modern web applications simpler and more maintainable.
+
+<LessonNavigation nextUrl={''} nextText={''} prevUrl={'/nextjs-15/data-fetching'} prevText={'Data Fetching and Caching'}/>

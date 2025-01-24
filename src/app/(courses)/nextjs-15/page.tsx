@@ -123,6 +123,11 @@ export default function NextJS() {
             Data Fetching and Caching in Next.js
           </Link>
         </li>
+        <li>
+          <Link href="/nextjs-15/server-actions">
+            Server Actions and Mutations
+          </Link>
+        </li>
         <li>More are coming...</li>
       </ol>
     </div>
