@@ -128,6 +128,11 @@ export default function NextJS() {
             Server Actions and Mutations
           </Link>
         </li>
+        <li>
+          <Link href="/nextjs-15/caching">
+            Understanding Caching in Next.js
+          </Link>
+        </li>
         <li>More are coming...</li>
       </ol>
     </div>
