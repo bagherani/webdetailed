@@ -1,0 +1,119 @@
+import { LessonNavigation } from "@/components/lesson-navigation";
+
+export const metadata={
+  title : "Connecting Your Next.js App to MongoDB",
+  description: "Learn how to connect your Next.js application to a MongoDB database using Docker, and the MongoDB Node.js driver"
+}
+
+# Connecting Your Next.js App to MongoDB
+<iframe width="560" height="315" src="https://www.youtube.com/embed/64dDAtlK_Fw?si=bfqMY1UuZbGqwKUP" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+## Setting Up MongoDB with Docker
+
+To work with a database in your Next.js project, you need a MongoDB instance. You have three options:
+
+1. **Use MongoDB Atlas** (a cloud-hosted option with a free tier)
+2. **Install MongoDB locally**
+3. **Run MongoDB in a Docker container** (recommended for flexibility)
+
+To set up MongoDB using Docker, run:
+
+```sh
+docker run -d --name mongodb -p 27017:27017 mongo
+```
+
+This command pulls the latest MongoDB image and runs it on port `27017`.
+
+## Connecting to MongoDB via Compass
+
+MongoDB Compass provides a GUI for managing databases. After launching Compass:
+
+1. Click the **Connect** button
+2. Use `mongodb://localhost:27017` as the connection string
+3. Name the connection (e.g., "Local MongoDB")
+4. Create a new database (e.g., `webdetailed`) and a collection (`users`)
+
+## Installing MongoDB Driver in Next.js
+
+To interact with MongoDB programmatically, install the official MongoDB driver:
+
+```sh
+npm install mongodb
+```
+
+## Setting Up Database Connection in Next.js
+
+Create a `db.ts` file to manage the database connection:
+
+```tsx
+import { MongoClient, Db } from "mongodb";
+
+const MONGO_URI = "mongodb://localhost:27017";
+const DB_NAME = "webdetailed";
+
+let db: Db;
+
+export async function getDB(): Promise<Db> {
+  if (!db) {
+    const client = new MongoClient(MONGO_URI);
+    await client.connect();
+    db = client.db(DB_NAME);
+  }
+  return db;
+}
+```
+
+## Creating a User Service
+
+Define a function to fetch users from the database:
+
+```tsx
+import { getDB } from "../db";
+import { Collection } from "mongodb";
+
+export interface User {
+  _id: string;
+  name: string;
+  age: number;
+}
+
+export async function getUsers(): Promise<User[]> {
+  const db = await getDB();
+  const usersCollection: Collection<User> = db.collection("users");
+  return usersCollection.find().toArray();
+}
+```
+
+## Fetching Data in a Next.js Page
+
+Modify your Next.js page to fetch and display users:
+
+```tsx
+import { getUsers } from "../services/userService";
+
+export default async function HomePage() {
+  const users = await getUsers();
+  return (
+    <div>
+      <h1>Users List</h1>
+      <ul>
+        {users.map((user) => (
+          <li key={user._id}>{user.name} - {user.age} years old</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+```
+
+## Summary
+
+- Set up MongoDB using Docker
+- Connected to the database via Compass
+- Installed the MongoDB Node.js driver
+- Created a structured way to fetch and display users
+
+This setup ensures a scalable and maintainable approach to handling databases in Next.js.
+
+
+<LessonNavigation nextUrl={''} nextText={''} prevUrl={'/nextjs-15/styling'} prevText={'Styling Next.js Apps: CSS, Sass & Tailwind Techniques Explained'}/>

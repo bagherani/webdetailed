@@ -1,0 +1,151 @@
+import { LessonNavigation } from "@/components/lesson-navigation";
+
+export const metadata={
+  title : "Styling Next.js Apps: CSS, Sass & Tailwind Techniques Explained",
+  description: "Learn the best practices for styling Next.js applications using CSS, SCSS, and Tailwind CSS"
+}
+
+# Styling in Next.js: CSS & Tailwind Explained
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/nvXviI3Gswc?si=fnDL2ei32X_IVt5M" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+## Writing CSS in Next.js
+
+Next.js supports multiple ways of styling applications. Two of the most common methods are:
+
+1. **Using Traditional CSS**
+2. **Using CSS Utility Frameworks (like Tailwind CSS)**
+
+### 1. Traditional CSS Approaches
+
+#### Global CSS Import
+
+You can write plain CSS and import it inside your components. However, importing a global CSS file means all styles will be included in the final bundle.
+
+```tsx
+import "../styles/global.css";
+```
+
+#### Component-Specific CSS
+
+A better approach is to scope styles by creating a separate CSS file for each component.
+
+```tsx
+import "./Component.css";
+```
+
+This prevents unused styles from loading on pages where they are not required.
+
+### Using SCSS in Next.js
+
+Next.js has built-in support for SCSS. You only need to install the `sass` package:
+
+```sh
+npm install sass
+```
+
+Then, update your file extension and use SCSS features like nesting:
+
+```scss
+.block-title {
+  font-size: 2rem;
+  span {
+    color: blue;
+  }
+}
+```
+
+### CSS Modules
+
+For better style encapsulation, you can use CSS modules. This ensures class names are unique across components, preventing conflicts.
+
+1. Create a CSS module file:
+
+   ```scss
+   // styles/Component.module.scss
+   .blockTitle {
+     color: red;
+   }
+   ```
+
+2. Import it inside your component:
+
+   ```tsx
+   import styles from "./Component.module.scss";
+
+   function Block() {
+     return <h1 className={styles.blockTitle}>Hello</h1>;
+   }
+   ```
+
+Next.js will automatically scope class names to prevent conflicts.
+
+### How Next.js Handles CSS at Build Time
+
+Next.js minifies and optimizes CSS at build time. To see how CSS is bundled, run:
+
+```sh
+npm run build
+```
+
+Then, navigate to `.next/static/css/` to inspect the generated styles.
+
+## Using Tailwind CSS in Next.js
+
+Tailwind CSS is a utility-first CSS framework that allows you to style elements directly using class names.
+
+### Installing Tailwind CSS
+
+If you didn’t enable Tailwind during project setup, install it manually:
+
+```sh
+npm install tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+```
+
+This will generate a `tailwind.config.js` file. Modify the `content` property to include your Next.js pages and components:
+
+```js
+module.exports = {
+  content: ["./pages/**/*.{js,ts,jsx,tsx}", "./components/**/*.{js,ts,jsx,tsx}"],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+};
+```
+
+### Import Tailwind in Your Application
+
+In `styles/globals.css`, add:
+
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+Now you can use Tailwind classes in your JSX:
+
+```tsx
+export default function Home() {
+  return <h1 className="text-3xl font-bold text-blue-600">Hello, Tailwind!</h1>;
+}
+```
+
+### How Tailwind Optimizes CSS
+
+Tailwind removes unused styles at build time, ensuring a minimal final CSS bundle. Run:
+
+```sh
+npm run build
+```
+
+and inspect `.next/static/css/` to verify only used classes are included.
+
+## Conclusion
+
+Next.js provides multiple ways to handle styling, from traditional CSS to modular SCSS and utility-first frameworks like Tailwind CSS. Choose the best approach based on your project’s needs. If you want better encapsulation, go with CSS Modules. If you prefer rapid styling, Tailwind CSS is an excellent choice.
+
+
+<LessonNavigation nextUrl={'/nextjs-15/working-with-mongodb'} nextText={"Connecting Your Next.js App to MongoDB"} prevUrl={'/nextjs-15/caching'} prevText={'Understanding Caching in Next.js'}/>
