@@ -143,6 +143,16 @@ export default function NextJS() {
             Connecting Your Next.js App to MongoDB
           </Link>
         </li>
+        <li>
+          <Link href="/nextjs-15/authentication">
+            Authentication using Firebase in Next.js
+          </Link>
+        </li>
+        <li>
+          <Link href="/nextjs-15/authorization">
+            Authorization using permit.io in Next.js
+          </Link>
+        </li>
         <li>More are coming...</li>
       </ol>
     </div>
