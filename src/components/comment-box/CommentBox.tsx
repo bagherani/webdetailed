@@ -14,5 +14,5 @@ export const CommentBox = () => {
       removeCommentBox();
     };
   });
-  return <div id="commentbox"></div>;
+  return <div className="commentbox"></div>;
 };
