@@ -8,7 +8,10 @@ export const CommentBox = () => {
   const projectId = process.env.NEXT_PUBLIC_COMMENT_BOX_PROJ_ID;
 
   useEffect(() => {
-    const removeCommentBox = commentBox(projectId);
+    const removeCommentBox = commentBox(projectId, {
+      backgroundColor: "#0a0a0a",
+      textColor: "#ededed",
+    });
 
     return () => {
       removeCommentBox();
