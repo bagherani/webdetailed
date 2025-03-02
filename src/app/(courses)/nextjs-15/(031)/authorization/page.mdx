@@ -1,0 +1,197 @@
+import { LessonNavigation } from "@/components/lesson-navigation";
+
+export const metadata={
+  title : "Implementing Role-Based Authorization in Next.js with Permit.io",
+  description: "Learn to implement role-based access control (RBAC) in Next.js using Permit.io, covering roles, actions, policies, and user permissions management."
+}
+
+# Implementing Role-Based Authorization in Next.js with Permit.io
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/Cc4m5mzgkWY?si=55B35cVtJE84sre5" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+Role-based authorization is a fundamental aspect of modern web applications, allowing you to control user access based on defined roles and permissions. In this article, we'll explore how to implement role-based access control (RBAC) in a Next.js application using **Permit.io**. We'll walk through setting up roles, actions, policies, and integrating Permit.io to manage user permissions effectively.
+
+## Understanding Role-Based Authorization
+
+Authorization determines what an authenticated user is allowed to do within an application. The role-based model simplifies this by assigning permissions to roles rather than individual users.
+
+### Key Components
+
+- **Roles**: Defined user types, such as `admin`, `editor`, or `viewer`.
+- **Actions**: Operations that can be performed, like `create`, `read`, `update`, `delete`.
+- **Policies**: Rules that map roles to the actions they're permitted to perform on resources.
+
+By mapping roles to users and defining policies, you can control access throughout your application.
+
+## Setting Up Permit.io
+
+**Permit.io** simplifies the implementation of RBAC by providing a platform to define roles, actions, policies, and manage user-role assignments.
+
+### 1. Create Resources and Actions
+
+In the **Permit's Policy** section, define your resources and actions:
+
+- **Resource**: `manage_blog`
+- **Actions**: `create`, `read`, `update`, `delete`
+
+### 2. Define Roles and Policies
+
+Navigate to **Roles** and set up roles like `admin`, `editor`, and `viewer`. Then, in the **Policy Editor**, assign actions to roles:
+
+- **Admin**: Can `create`, `read`, `update`, `delete` on `manage_blog`.
+- **Editor**: Can `create`, `read`, `update` on `manage_blog`.
+- **Viewer**: Can `read` on `manage_blog`.
+
+### 3. Assign Roles to Users
+
+In the **Directory**, add users and assign them roles. In a production environment, automate this process via Permit.io's API to sync with your authentication system.
+
+## Integrating Permit.io with Next.js
+
+Let's integrate Permit.io into a Next.js application to enforce these authorization rules.
+
+### Install Permit.io SDK
+
+Install the Permit.io SDK:
+
+```bash
+npm install permitio
+```
+
+### Configure the Permit.io Client
+
+Create a service file to initialize the Permit.io client:
+
+```tsx
+// app/services/permitService.ts
+
+'use server';
+
+import { Permit } from 'permitio';
+
+export const permit = new Permit({
+  pdp: 'https://cloudpdp.api.permit.io', // Use Permit.io cloud PDP
+  token: 'YOUR_PERMIT_API_KEY', // Replace with your Permit.io API key
+});
+```
+
+> **Note:** Replace `'YOUR_PERMIT_API_KEY'` with your actual API key from the Permit.io dashboard.
+
+### Middleware for User ID Extraction
+
+Implement middleware to extract the user ID from cookies and pass it in the headers:
+
+```tsx
+// middleware.ts
+
+import { NextRequest, NextResponse } from 'next/server';
+
+export const config = {
+  matcher: ['/dashboard/:path*'],
+};
+
+export function middleware(request: NextRequest) {
+  const userId = request.cookies.get('user_id')?.value;
+
+  if (userId) {
+    const headers = new Headers(request.headers);
+    headers.set('x-user-id', userId);
+    return NextResponse.next({ request: { headers } });
+  }
+
+  return NextResponse.next();
+}
+```
+
+### Implementing Permission Checks
+
+#### Dashboard Page
+
+On the dashboard, conditionally render content based on user permissions:
+
+```tsx
+// app/dashboard/page.tsx
+
+import { permit } from '@/app/services/permitService';
+import Link from 'next/link';
+
+export default async function Dashboard({ request }: { request: Request }) {
+  const userId = request.headers.get('x-user-id');
+
+  // Check if the user has 'create' permission on 'manage_blog'
+  const hasAccess = await permit.check(userId!, 'create', 'manage_blog');
+
+  return (
+    <div>
+      <h1>Welcome to the Dashboard</h1>
+      {hasAccess && (
+        <Link href="/dashboard/create-post">
+          Create Post
+        </Link>
+      )}
+    </div>
+  );
+}
+```
+
+#### Create Post Page
+
+Protect the route by checking permissions and redirecting unauthorized users:
+
+```tsx
+// app/dashboard/create-post/page.tsx
+
+import { redirect } from 'next/navigation';
+import { permit } from '@/app/services/permitService';
+
+export default async function CreatePost({ request }: { request: Request }) {
+  const userId = request.headers.get('x-user-id');
+
+  // Verify 'create' permission
+  const hasAccess = await permit.check(userId!, 'create', 'manage_blog');
+
+  if (!hasAccess) {
+    // Redirect to dashboard if unauthorized
+    redirect('/dashboard');
+  }
+
+  return (
+    <div>
+      <h1>Create a New Post</h1>
+      {/* Post creation form goes here */}
+    </div>
+  );
+}
+```
+
+### Assigning Roles Programmatically
+
+In a real-world application, assign roles to users dynamically using Permit.io's API:
+
+```tsx
+// Example of assigning a role to a user
+await permit.api.users.assignRole('USER_ID', 'ROLE');
+```
+
+Replace `'USER_ID'` with the user's ID and `'ROLE'` with the desired role, such as `'admin'`.
+
+## Testing the Authorization
+
+Ensure your middleware is correctly extracting the user ID and that permissions are enforced:
+
+1. **As a Viewer**: Attempting to access the create post page should redirect back to the dashboard.
+2. **As an Admin**: The option to create a post should be visible, and access to the create post page should be granted.
+
+Modify user roles in the Permit.io dashboard or via API to test different scenarios.
+
+## Conclusion
+
+Implementing role-based authorization enhances your application's security by ensuring users can only perform actions they're permitted to. Leveraging Permit.io simplifies the management of roles, actions, and policies, allowing you to focus on building features.
+
+By integrating Permit.io with Next.js, you gain a scalable solution for handling authorization that can adapt to complex permission requirements.
+
+---
+
+By following this guide, you've set up a robust authorization system using Permit.io in your Next.js application. Continue to refine your policies and role assignments to meet your application's needs.
+
+<LessonNavigation nextUrl={''} nextText={''} prevUrl={'/nextjs-15/authentication'} prevText={'Implementing Authentication in Next.js using Firebase and Google Sign-In'}/>

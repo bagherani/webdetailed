@@ -1,0 +1,352 @@
+import { LessonNavigation } from "@/components/lesson-navigation";
+
+export const metadata={
+  title : "Implementing Authentication in Next.js using Firebase and Google Sign-In",
+  description: 'Simplify authentication in web apps using Firebase, enabling secure user management with features like Sign in with Google.'
+}
+
+# Implementing Authentication in Next.js using Firebase and Google Sign-In
+
+In modern web applications, authentication is a critical component for user management and security. Implementing a robust authentication system from scratch can be time-consuming and complex. Leveraging third-party identity providers like Firebase simplifies the process, providing secure and reliable authentication services, including options like "Sign in with Google".
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/lyoCQQG7Q7s?si=DjU1hq5HStfRqQh_" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+## Table of Contents
+
+- [Why Use Firebase Authentication?](#why-use-firebase-authentication)
+- [Setting Up Firebase Project](#setting-up-firebase-project)
+- [Integrating Firebase with Next.js](#integrating-firebase-with-nextjs)
+  - [Installing Firebase SDK](#installing-firebase-sdk)
+  - [Configuring Firebase in Next.js](#configuring-firebase-in-nextjs)
+- [Implementing Google Sign-In](#implementing-google-sign-in)
+  - [Creating the Sign-In Component](#creating-the-sign-in-component)
+  - [Handling User State with Context](#handling-user-state-with-context)
+- [Managing Authentication State](#managing-authentication-state)
+  - [Persisting User State Across Refreshes](#persisting-user-state-across-refreshes)
+  - [Sign-Out Functionality](#sign-out-functionality)
+- [Protecting Routes with Middleware](#protecting-routes-with-middleware)
+  - [Implementing Middleware in Next.js](#implementing-middleware-in-nextjs)
+  - [Validating Tokens on the Server-Side](#validating-tokens-on-the-server-side)
+- [Conclusion](#conclusion)
+
+## Why Use Firebase Authentication?
+
+Using third-party authentication providers like Firebase offers several benefits:
+
+- **Simplified User Management**: Firebase handles user registration, sign-in, password resets, and more.
+- **Security Best Practices**: Firebase ensures passwords are stored securely and handles authentication flows safely.
+- **Social Sign-In Options**: Easily implement sign-in with Google, Facebook, Twitter, etc.
+- **Scalability**: Firebase services scale with your application without additional infrastructure.
+
+## Setting Up Firebase Project
+
+1. **Create a Firebase Project**: Go to the [Firebase Console](https://console.firebase.google.com/) and create a new project.
+2. **Enable Authentication**: In your project dashboard, navigate to **Authentication** and click on **Get Started**.
+3. **Enable Google Sign-In**:
+   - Go to the **Sign-in method** tab.
+   - Enable **Google** provider and set your support email.
+
+## Integrating Firebase with Next.js
+
+### Installing Firebase SDK
+
+In your Next.js project directory, install Firebase:
+
+```bash
+npm install firebase
+```
+
+### Configuring Firebase in Next.js
+
+Create a `firebase.ts` file to initialize Firebase in your application:
+
+```tsx
+// firebase.ts
+import { initializeApp } from "firebase/app";
+
+const firebaseConfig = {
+  apiKey: "<YOUR_API_KEY>",
+  authDomain: "<YOUR_AUTH_DOMAIN>",
+  projectId: "<YOUR_PROJECT_ID>",
+  appId: "<YOUR_APP_ID>",
+  // Add other config variables if needed
+};
+
+const app = initializeApp(firebaseConfig);
+
+export default app;
+```
+
+Replace the placeholders with your Firebase project's configuration, which you can find in the Firebase console under **Project Settings**.
+
+## Implementing Google Sign-In
+
+### Creating the Sign-In Component
+
+Create a `LoginWithGoogle` component:
+
+```tsx
+// components/LoginWithGoogle.tsx
+"use client";
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import app from "../firebase";
+
+const provider = new GoogleAuthProvider();
+
+export default function LoginWithGoogle() {
+  const handleSignIn = async () => {
+    const auth = getAuth(app);
+    try {
+      await signInWithPopup(auth, provider);
+      // Handle successful sign-in
+    } catch (error) {
+      // Handle Errors here.
+    }
+  };
+
+  return <button onClick={handleSignIn}>Sign in with Google</button>;
+}
+```
+
+Import and use this component in your page:
+
+```tsx
+// app/page.tsx
+import LoginWithGoogle from "../components/LoginWithGoogle";
+
+export default function Home() {
+  return (
+    <div>
+      <h1>Welcome to My Next.js App</h1>
+      <LoginWithGoogle />
+    </div>
+  );
+}
+```
+
+### Handling User State with Context
+
+Create a context to manage user authentication state:
+
+```tsx
+// context/UserContext.tsx
+"use client";
+import { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import app from "../firebase";
+
+interface User {
+  uid: string;
+  email: string | null;
+  displayName: string | null;
+  // Add other user properties if needed
+}
+
+interface UserContextProps {
+  user: User | null;
+  // Add methods to update user state if needed
+}
+
+const UserContext = createContext<UserContextProps | undefined>(undefined);
+
+export function UserContextProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const auth = getAuth(app);
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        // User is signed in
+        const { uid, email, displayName } = firebaseUser;
+        setUser({ uid, email, displayName });
+      } else {
+        // User is signed out
+        setUser(null);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  return <UserContext.Provider value={{ user }}>{children}</UserContext.Provider>;
+}
+
+export function useUser() {
+  const context = useContext(UserContext);
+  if (context === undefined) {
+    throw new Error("useUser must be used within a UserContextProvider");
+  }
+  return context;
+}
+```
+
+Wrap your application with `UserContextProvider`:
+
+```tsx
+// app/layout.tsx
+import { UserContextProvider } from "../context/UserContext";
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <body>
+        <UserContextProvider>{children}</UserContextProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+## Managing Authentication State
+
+### Persisting User State Across Refreshes
+
+The `onAuthStateChanged` listener in the `UserContext` ensures that the user's authentication state persists across page refreshes by listening to Firebase Auth state changes.
+
+### Sign-Out Functionality
+
+Add a sign-out button using Firebase Auth's `signOut` method:
+
+```tsx
+// components/UserInfo.tsx
+"use client";
+import { signOut, getAuth } from "firebase/auth";
+import app from "../firebase";
+import { useUser } from "../context/UserContext";
+
+export default function UserInfo() {
+  const { user } = useUser();
+
+  const handleSignOut = async () => {
+    const auth = getAuth(app);
+    await signOut(auth);
+    // Handle post-sign-out logic if needed
+  };
+
+  if (!user) return null;
+
+  return (
+    <div>
+      <p>Welcome, {user.displayName || user.email}</p>
+      <button onClick={handleSignOut}>Sign Out</button>
+    </div>
+  );
+}
+```
+
+Include `UserInfo` in your layout or pages where you want to display user information:
+
+```tsx
+// app/page.tsx
+import UserInfo from "../components/UserInfo";
+
+export default function Home() {
+  return (
+    <div>
+      <UserInfo />
+      {/* Rest of your page content */}
+    </div>
+  );
+}
+```
+
+## Protecting Routes with Middleware
+
+### Implementing Middleware in Next.js
+
+Create a middleware to protect routes that require authentication:
+
+```tsx
+// middleware.ts
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { getAuth } from "firebase/auth";
+import app from "./firebase";
+
+export function middleware(request: NextRequest) {
+  const auth = getAuth(app);
+  const user = auth.currentUser;
+
+  if (
+    !user &&
+    request.nextUrl.pathname.startsWith("/dashboard") // Protect routes starting with /dashboard
+  ) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: ["/dashboard/:path*"],
+};
+```
+
+### Validating Tokens on the Server-Side
+
+To validate tokens server-side, use the Firebase Admin SDK:
+
+1. **Install Firebase Admin SDK**:
+
+   ```bash
+   npm install firebase-admin
+   ```
+
+2. **Set Up Firebase Admin**:
+
+   ```tsx
+   // utils/firebaseAdmin.ts
+   import * as admin from "firebase-admin";
+
+   if (!admin.apps.length) {
+     admin.initializeApp({
+       credential: admin.credential.applicationDefault(),
+       // You can also use a service account
+     });
+   }
+
+   export default admin;
+   ```
+
+3. **Validate the Token in Middleware**:
+
+   ```tsx
+   // middleware.ts
+   import { NextResponse } from "next/server";
+   import type { NextRequest } from "next/server";
+   import admin from "./utils/firebaseAdmin";
+
+   export async function middleware(request: NextRequest) {
+     const token = request.headers.get("Authorization")?.split("Bearer ")[1];
+
+     if (!token) {
+       return NextResponse.redirect(new URL("/login", request.url));
+     }
+
+     try {
+       await admin.auth().verifyIdToken(token);
+       return NextResponse.next();
+     } catch (error) {
+       return NextResponse.redirect(new URL("/login", request.url));
+     }
+   }
+
+   export const config = {
+     matcher: ["/dashboard/:path*"],
+   };
+   ```
+
+   Ensure that the client includes the token in the `Authorization` header when making requests.
+
+## Conclusion
+
+Implementing authentication using Firebase in a Next.js application simplifies user management and enhances security. By integrating Google Sign-In, managing authentication state with context, and protecting routes with middleware, you can build robust and secure applications with ease.
+
+Firebase not only handles the complexity of authentication flows but also provides additional features like database services, analytics, and more, which can be leveraged to enhance your application further.
+
+Happy coding!
+
+<LessonNavigation nextUrl={'/nextjs-15/authorization'} nextText={"Implementing Role-Based Authorization in Next.js with Permit.io"} prevUrl={'/nextjs-15/working-with-mongodb'} prevText={'Connecting Your Next.js App to MongoDB'}/>
