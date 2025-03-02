@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import commentBox from "commentbox.io";
 
 export const CommentBox = () => {
-  const projectId = process.env.NEXT_PUBLIC_COMMENTBOX_PROJECT_ID;
+  const projectId = process.env.NEXT_PUBLIC_COMMENT_BOX_PROJ_ID;
 
   useEffect(() => {
     const removeCommentBox = commentBox(projectId);
