@@ -17,10 +17,10 @@ export const Header = () => {
           <ul className="flex space-x-4">
             <li>
               <Link
-                href="https://mohi.tech"
+                href="https://mohi.click"
                 target="_blank"
                 className="text-white hover:text-gray-300 py-3 px-4 inline-block"
-                aria-label="go to mohi.tech website"
+                aria-label="go to mohi.click website"
               >
                 Author
               </Link>
