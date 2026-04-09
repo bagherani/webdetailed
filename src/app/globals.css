@@ -1,6 +1,5 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@config "../../tailwind.config.ts";
 @import "prismjs/themes/prism-tomorrow.css";
 
 :root {
@@ -82,3 +81,8 @@ body {
 }
 
 /* Add more token overrides as needed */
+
+.dark\:prose-invert:is(.dark *) :where(pre):not(:where([class~=not-prose],[class~=not-prose] *)) {
+  background-color: #111827;
+  color: #f3f4f6
+}

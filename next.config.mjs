@@ -1,5 +1,8 @@
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import createMDX from '@next/mdx'
-import rehypePrism from 'rehype-prism-plus';
+
+const projectRoot = path.dirname(fileURLToPath(import.meta.url))
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -8,12 +11,15 @@ const nextConfig = {
   },
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
   output: 'export',
+  turbopack: {
+    root: projectRoot,
+  },
 }
 
 const withMDX = createMDX({
   // Add markdown plugins here, as desired
   options: {
-    rehypePlugins: [rehypePrism]
+    rehypePlugins: ['rehype-prism-plus']
   }
 })
 

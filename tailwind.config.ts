@@ -1,5 +1,5 @@
 import type { Config } from "tailwindcss";
-import { fontFamily } from "tailwindcss/defaultTheme";
+import defaultTheme from "tailwindcss/defaultTheme";
 import * as typo from "@tailwindcss/typography";
 const config: Config = {
   darkMode: "class",
@@ -16,7 +16,7 @@ const config: Config = {
         foreground: "var(--foreground)",
       },
       fontFamily: {
-        sans: ["Inter", ...fontFamily.sans],
+        sans: ["Inter", ...defaultTheme.fontFamily.sans],
       },
       typography: ({ theme }: { theme: (str: string) => string }) => ({
         DEFAULT: {

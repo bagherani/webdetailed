@@ -9,7 +9,7 @@ export const metadata={
 
 # How Suspense Works in Next.js
 React Suspense is a powerful way to optimize loading states, and in Next.js, we can use Suspense to manage asynchronous tasks more efficiently, enhancing page performance and SEO. While page-level Suspense is useful, applying it to specific components, like a comments or reviews section, can significantly improve user experience by streaming content as it becomes available, rather than holding up the entire page.
-<iframe width="560" height="315" src="https://www.youtube.com/embed/mUSnoW15lzY?si=JpQFlOJsyZbUg9zB" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/mUSnoW15lzY?si=JpQFlOJsyZbUg9zB" title="YouTube video player"  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
 
 In Next.js, pages doing asynchronous jobs—like API calls—can be wrapped in Suspense to trigger a loading fallback. At the page level, this means loading states are shown until all necessary data is ready. However, component-level Suspense allows for independent loading states, enabling sections of the page to render as data arrives without blocking the entire layout. This approach uses streaming, where Next.js serves the primary content while keeping the connection open for other parts, such as reviews, to load later.
 
