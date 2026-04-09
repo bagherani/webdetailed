@@ -49,7 +49,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased h-full flex flex-col`}
       >
         <Header />
-        <main className="my-5 flex-grow container mx-auto flex justify-between items-centers">
+        <main className="my-5 grow container mx-auto flex justify-between items-centers">
           {children}
         </main>
         <Footer />
